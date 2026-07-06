@@ -1,1 +1,3 @@
-/bin/
+bin/
+src/config.properties
+.classpath
