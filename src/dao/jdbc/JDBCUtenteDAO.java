@@ -20,6 +20,7 @@ public class JDBCUtenteDAO implements UtenteDAO {
 	
 	
 	public JDBCUtenteDAO(String connection) {
+		connection=connection;
 		
 		
 	}
@@ -87,7 +88,7 @@ public class JDBCUtenteDAO implements UtenteDAO {
 	@Override
 	public String AggiornaUtente(Utente u) {
 		
-		String query= "UPDATE utente SET email=?,password=?,nome=?,cognome=?,dataiscrizione=?,datanascita=?  WHERE email=?";
+		String query= "UPDATE utente SET ,password=?,nome=?,cognome=?,,datanascita=?  WHERE email=?";
 		try(PreparedStatement statement=connection.prepareStatement(query)){//il result set manda la query al db e inserisce dentro le informazioni inserite qui dall'utente fa da "autobus lo statement"
 			statement.setString(1, u.getPassword());
 			
@@ -95,11 +96,8 @@ public class JDBCUtenteDAO implements UtenteDAO {
 			
 			statement.setString(3, u.getCognome());
 			
-			statement.setDate(4, u.getDataIscrizione());
-			
 			statement.setDate(5, u.getDataNascita());
 			
-			statement.setString(6, u.getEmail());
 			
 			int righeAggiornate = statement.executeUpdate();
 			
