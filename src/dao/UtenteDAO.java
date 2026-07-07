@@ -10,7 +10,7 @@ public interface UtenteDAO {
 	
 	Utente cercaEmail(String email);
 	
-	String aggiornaUtente(Utente u);
+	boolean aggiornaUtente(Utente u);
 	
 	boolean eliminaUtente(String email);
 	
