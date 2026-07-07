@@ -12,6 +12,8 @@ import dao.UtenteDAO;
 
 import entity.Utente;
 
+import java.util.Date;
+
 public class JDBCUtenteDAO implements UtenteDAO {
 	//RIFERIMENTO ALLA LIBRERIA CONNECTION
 	Connection connection;
@@ -25,7 +27,7 @@ public class JDBCUtenteDAO implements UtenteDAO {
 	@Override
 	public boolean SalvaUtente(Utente u) {
 		
-		String query="INSERT INTO utente(email,password,nome,cognome,dataiscrizione,datanascita)VALUES(gennarobitondo@hotmail.it,456,Gennaro,Bitondo,2026-06-11,2005-05-02,)";
+		String query = "INSERT INTO utente(email, password, nome, cognome, dataiscrizione, datanascita) VALUES(?, ?, ?, ?, ?, ?,?)";
 		try (PreparedStatement statement = connection.prepareStatement(query)) {  // aggiunge nuovi elementi G.B
 		               statement.setString(1, u.getEmail()); //ANGELO NON CAPISCO COME PRENDERMI IL TIPO DATE
 		               
@@ -34,6 +36,8 @@ public class JDBCUtenteDAO implements UtenteDAO {
 		                 statement.setString(3, u.getNome());
 		                 
 		                  statement.setString(4, u.getCognome());
+		                  
+		                  statement.setDate(5, u.getDataNascita());
 		                  
 		                  
 		                  
@@ -51,7 +55,7 @@ public class JDBCUtenteDAO implements UtenteDAO {
 	public Utente CercaEmail(String email) {
 	    String query = "SELECT * FROM utente WHERE email = ?";
 	    
-	    try (PreparedStatement statement = connection.prepareStatement(query)) {  //prende l'email G.B
+	    try (PreparedStatement statement = connection.prepareStatement(query)) {  //prende la query la manda al db il risultato viene assegnato ad un result set che ci mostrerà il risultato G.B
 	        statement.setString(1, email);
 	        
 	        try (ResultSet resultSet = statement.executeQuery()) {
@@ -82,15 +86,54 @@ public class JDBCUtenteDAO implements UtenteDAO {
 	}
 	@Override
 	public String AggiornaUtente(Utente u) {
-		// TODO Auto-generated method stub
+		
+		String query= "UPDATE utente SET email=?,password=?,nome=?,cognome=?,dataiscrizione=?,datanascita=?  WHERE email=?";
+		try(PreparedStatement statement=connection.prepareStatement(query)){//il result set manda la query al db e inserisce dentro le informazioni inserite qui dall'utente fa da "autobus lo statement"
+			statement.setString(1, u.getPassword());
+			
+			statement.setString(2, u.getNome());
+			
+			statement.setString(3, u.getCognome());
+			
+			statement.setDate(4, u.getDataIscrizione());
+			
+			statement.setDate(5, u.getDataNascita());
+			
+			statement.setString(6, u.getEmail());
+			
+			int righeAggiornate = statement.executeUpdate();
+			
+            if (righeAggiornate > 0) {
+                return "Aggiornamento completato con successo";
+            } else {
+                return "Nessun utente trovato con questa email";
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "Errore durante l'aggiornamento: " + e.getMessage();
+        }
+    
+		
+	
 		return null;
 	}
 
 	@Override
+		
 	public boolean EliminaUtente(String email) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+        String query = "DELETE FROM utente WHERE email = ?";
+        
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, email);
+            
+            int righeEliminate = statement.executeUpdate();
+            return righeEliminate > 0;
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+}
 	
 
-}
