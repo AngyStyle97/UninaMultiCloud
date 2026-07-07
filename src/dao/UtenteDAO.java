@@ -4,20 +4,16 @@ import entity.Utente;
 
 public interface UtenteDAO {
 	
+	Utente login(String email, String password);
 	
-	boolean SalvaUtente(Utente u);
+	boolean salvaUtente(Utente u);
 	
-	Utente CercaEmail(String email);
+	Utente cercaEmail(String email);
 	
-	String AggiornaUtente(Utente u);
+	String aggiornaUtente(Utente u);
 	
-	boolean EliminaUtente(String email);
+	boolean eliminaUtente(String email);
 	
-	
-	
-	
-	
-
 }
   
 	
