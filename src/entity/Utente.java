@@ -11,7 +11,7 @@ public class Utente {
 	private String password;
 	private Date dataIscrizione;
 	private int numeroCaricamenti;
-	private java.sql.Date dataNascita;
+	private Date dataNascita;
 	private ArrayList<Playlist> playlist;
 	
 	public Utente(String email, String nome, String cognome, String password, Date dataIscrizione,
@@ -22,7 +22,7 @@ public class Utente {
 		this.cognome = cognome;
 		this.password = password;
 		this.dataIscrizione = dataIscrizione;
-		this.dataNascita = (java.sql.Date) dataNascita;
+		this.dataNascita = dataNascita;
 		this.numeroCaricamenti = numeroCaricamenti;
 		this.playlist = new ArrayList<>();
 	}
@@ -51,7 +51,7 @@ public class Utente {
 		return numeroCaricamenti;
 	}
 
-	public java.sql.Date getDataNascita() {
+	public Date getDataNascita() {
 		return dataNascita;
 	}
 
