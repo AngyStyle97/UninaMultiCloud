@@ -5,10 +5,11 @@ import java.util.ArrayList;
 public class Condivisa extends Playlist {
 
     private ArrayList<Utente> utenti;
-
-    public Condivisa(String idPlaylist, String nomePlaylist) {
-        super(idPlaylist, nomePlaylist);
-        this.utenti = new ArrayList<>();
+    
+    public Condivisa(String idPlaylist, String nomePlaylist, Utente utente) {
+        super(idPlaylist, nomePlaylist, utente);
+        
+       this.utenti = new ArrayList<>();
     }
 
     public ArrayList<Utente> getUtenti() {
@@ -22,7 +23,12 @@ public class Condivisa extends Playlist {
     public void rimuoviUtente(Utente u) {
         utenti.remove(u);
     }
-
+    
+    @Override
+    public String getTipoPlaylist() {
+    	return "condivisa";
+     }
+    
     @Override
     public String toString() {
         return "Playlist condivisa - " + super.toString() +

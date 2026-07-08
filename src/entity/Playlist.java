@@ -7,12 +7,14 @@ public abstract class Playlist {
 	private String idPlaylist;
 	private String nomePlaylist;
 	private ArrayList<ElementoMultimediale> elementi;
+	private Utente utente;
 	
-	public Playlist(String idPlaylist, String nomePlaylist) {
+	public Playlist(String idPlaylist, String nomePlaylist, Utente utente) {
 		
 		this.idPlaylist = idPlaylist;
 		this.nomePlaylist = nomePlaylist;
 		this.elementi = new ArrayList<>();
+		this.utente = utente;
 	}
 
 	public String getIdPlaylist() {
@@ -42,6 +44,12 @@ public abstract class Playlist {
 	public int getNumeroElementi() {
 		return elementi.size();
 	}
+	
+	public Utente getUtente() {
+		return utente;
+	}
+	
+	public abstract String getTipoPlaylist();
 	
 	@Override
 	public String toString() {

@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
 import dao.PlaylistDAO;
 import database.DatabaseConnection;
 import entity.Condivisa;
@@ -14,39 +13,45 @@ import entity.Privata;
 import entity.Pubblica;
 import entity.Utente;
 
+
 public class JDBCPlaylistDAO implements PlaylistDAO {
 
 	@Override
 	public boolean salvaPlaylist(Playlist p) {
-		String query="INSERT INTO playlist(idPlaylist,nomePlaylist) VALUES(?,?)";
-		try(Connection connection=DatabaseConnection.getConnection();
+		String query="INSERT INTO playlist(id_playlist, nomeplaylist, email, tipoplaylist) VALUES(?, ?, ?, ?)";
+		
+		try(Connection connection = DatabaseConnection.getConnection();
 				PreparedStatement statement = connection.prepareStatement(query)) {
 			
 			statement.setString(1, p.getIdPlaylist());	     
 			statement.setString(2, p.getNomePlaylist());
+			statement.setString(3, p.getUtente().getEmail());
+			statement.setString(4, p.getTipoPlaylist());
 			     
 			int righeInserite = statement.executeUpdate(); 
 			return righeInserite > 0; 
+			
 		} catch (SQLException e) {
 			e.printStackTrace(); 
+			return false;
 		}
-		return false;
 	}
 
 	@Override
 	public Playlist cercaPerId(String idPlaylist) {
-		String query="SELECT * FROM playlist WHERE idPlaylist=?";
-		// CORRETTO: Sostituito il ';' dopo getConnection() con una virgola ',' per legare il PreparedStatement
-		try(Connection connection=DatabaseConnection.getConnection();
+		String query="SELECT * FROM playlist WHERE id_playlist = ?";
+		
+		try(Connection connection = DatabaseConnection.getConnection();
 				PreparedStatement statement = connection.prepareStatement(query)) {
 				        
-			statement.setString(1, idPlaylist); // Sistemato il parametro coerente con l'id
+			statement.setString(1, idPlaylist);
 		                
-			try (ResultSet rs = statement.executeQuery()) {
+			ResultSet rs = statement.executeQuery();
+			
 				if(rs.next()) {
-					return creaPlaylistDaResultSet(rs); // Chiamata al metodo di supporto per restituire Playlist anziché ResultSet
+					return creaPlaylistDaResultSet(rs);
 				}
-			}
+			
 		} catch(SQLException e) {  
 			e.printStackTrace();
 		}
@@ -55,114 +60,143 @@ public class JDBCPlaylistDAO implements PlaylistDAO {
 
 	@Override
 	public boolean aggiornaPlaylist(Playlist p) {
-		String query="UPDATE SET idPlaylist=?,nomeplaylist=?";
+		String query="UPDATE playlist SET nomeplaylist = ?, tipoplaylist = ? WHERE id_playlist = ?";
+		
 		try (Connection connection = DatabaseConnection.getConnection();
 				  PreparedStatement statement = connection.prepareStatement(query)) {
 			
-			       statement.setString(1, p.getIdPlaylist());
-			       statement.setString(2, p.getNomePlaylist());
+			       statement.setString(1, p.getNomePlaylist());
+			       statement.setString(2, p.getTipoPlaylist());
+			       statement.setString(3, p.getIdPlaylist());
+			       
 					int righeAggiornate = statement.executeUpdate();
-					
 		            return righeAggiornate > 0;
+		            
 			  } catch (SQLException e) {
-				  
-				  e.printStackTrace();
-				  
+				  e.printStackTrace();				  
 				  return false;
 			  }
-			}
-		
-		
-		
+			}		
 	
-
 	@Override
 	public boolean eliminaPlaylist(String idPlaylist) {
 		
-		String query="DELETE FROM utente WHERE idPlaylist=?";
-		try(Connection connection=DatabaseConnection.getConnection();
+		String query="DELETE FROM playlist WHERE id_playlist = ?";
+		try(Connection connection = DatabaseConnection.getConnection();
 				  PreparedStatement statement = connection.prepareStatement(query)) {
+			
 					  statement.setString(1, idPlaylist);
-
+					  
 			            int righeEliminate = statement.executeUpdate();
-
 			            return righeEliminate > 0;
 
 			        } catch (SQLException e) {
-
 			            e.printStackTrace();
-
+			        	return false;
 				  }
-						
-				
-		return false;
 	}
 
 	@Override
 	public ArrayList<Playlist> cercaPerUtente(String email) {
-		String query="SELECT*  FROM playlist WHERE email=?";
-		try(Connection connection=DatabaseConnection.getConnection();
+		String query="SELECT * FROM playlist WHERE email = ?";
+		ArrayList<Playlist> lista = new ArrayList<>();
+		
+		try(Connection connection = DatabaseConnection.getConnection();
 				  PreparedStatement statement = connection.prepareStatement(query)) {
+			
 			statement.setString(1, email); 
+            ResultSet rs = statement.executeQuery();
             
-			try (ResultSet rs = statement.executeQuery()) {
-				ArrayList<Playlist> lista = new ArrayList<>();
 				while (rs.next()) {
-				    Playlist p = creaPlaylistDaResultSet(rs);
-				    lista.add(p);
-				}
-				return lista;
-			}
-			       
+				  lista.add(creaPlaylistDaResultSet(rs));
+				}		       
 		}
 		catch(SQLException e) {  
 			e.printStackTrace();
-		}
-		
-	
-		return null;
+		}	
+		return lista;
 	}
 
 	@Override
 	public ArrayList<Playlist> cercaPerTipo(String tipoPlaylist) {
-		String query="SELECT*  FROM playlist WHERE email=?";
-		try(Connection connection=DatabaseConnection.getConnection();
+		String query="SELECT * FROM playlist WHERE tipoplaylist = ?";
+		ArrayList<Playlist> lista = new ArrayList<>();
+		
+		try(Connection connection = DatabaseConnection.getConnection();
 				  PreparedStatement statement = connection.prepareStatement(query)) {
+			
 			statement.setString(1, tipoPlaylist); 
             
-			try (ResultSet rs = statement.executeQuery()) {
-				ArrayList<Playlist> lista = new ArrayList<>();
+			ResultSet rs = statement.executeQuery();
+			
 				while (rs.next()) {
-				    Playlist p = creaPlaylistDaResultSet(rs);
-				    lista.add(p);
-				}
-				return lista;
-			}
-			       
+				   lista.add(creaPlaylistDaResultSet(rs));
+				}			       
 		}
 		catch(SQLException e) {  
 			e.printStackTrace();
 		}
 		
 		
-		return null;
+		return lista;
 	}
 	
-	private Playlist creaPlaylistDaResultSet(ResultSet rs) throws SQLException { //questa parte non mi convince non posso fare come utente perche playlist e definita come classe astratta
-	    String id = rs.getString("idPlaylist");
-	    String nome = rs.getString("nomePlaylist");
+	 @Override
+	    public boolean aggiungiElemento(String idPlaylist, String idElemento) {
+	        String query = "INSERT INTO ha(id_playlist, id_elemento) VALUES (?, ?)";
+
+	        try (Connection connection = DatabaseConnection.getConnection();
+	             PreparedStatement statement = connection.prepareStatement(query)) {
+
+	            statement.setString(1, idPlaylist);
+	            statement.setString(2, idElemento);
+
+	            int righeInserite = statement.executeUpdate();
+	            return righeInserite > 0;
+
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	            return false;
+	        }
+	    }
+
+	    @Override
+	    public boolean rimuoviElemento(String idPlaylist, String idElemento) {
+	        String query = "DELETE FROM ha WHERE id_playlist = ? AND id_elemento = ?";
+
+	        try (Connection connection = DatabaseConnection.getConnection();
+	             PreparedStatement statement = connection.prepareStatement(query)) {
+
+	            statement.setString(1, idPlaylist);
+	            statement.setString(2, idElemento);
+
+	            int righeEliminate = statement.executeUpdate();
+	            return righeEliminate > 0;
+
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	            return false;
+	        }
+	    }
+	
+	private Playlist creaPlaylistDaResultSet(ResultSet rs) throws SQLException {
+	    String id = rs.getString("id_playlist");
+	    String nome = rs.getString("nomeplaylist");
+	    String tipo = rs.getString("tipoplaylist");
+	    String email = rs.getString("email");
 	    
-	    String tipo = rs.getString("tipo"); 
+	    JDBCUtenteDAO utenteDAO = new JDBCUtenteDAO();
+	    Utente u = new Utente(email, null, null, null, null, 0, null);
 	    
 	    switch (tipo.toUpperCase()) {
 	        case "PRIVATA":
-	            return new Privata(id, nome);
+	            return new Privata(id, nome, u);
 	            
 	        case "PUBBLICA":
-	            return new Pubblica(id, nome);
+	            return new Pubblica(id, nome, u);
 	            
 	        case "CONDIVISA":
-	            return new Condivisa(id, nome);
+	            return new Condivisa(id, nome, u);
 	            
 	        default:
 	            throw new IllegalArgumentException("Tipo playlist non riconosciuto: " + tipo);
