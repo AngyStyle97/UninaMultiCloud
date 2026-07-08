@@ -13,6 +13,6 @@ public interface ElementoMultimedialeDAO {
 	
 	boolean  aggiornaElemento(ElementoMultimediale e);
 	
-	ArrayList<ElementoMultimediale> cercaElementi(String titolo, String autore);
+	ArrayList<ElementoMultimediale> cercaElementi(String titolo);
 
 }
