@@ -16,5 +16,9 @@ public interface PlaylistDAO {
 	ArrayList<Playlist> cercaPerUtente(String email);
 	
 	ArrayList<Playlist> cercaPerTipo (String tipoPlaylist); 
+	
+	boolean aggiungiElemento(String idPlaylist, String idElemento);
+	
+	boolean rimuoviElemento(String idPlaylist, String idElemento);
 
 }

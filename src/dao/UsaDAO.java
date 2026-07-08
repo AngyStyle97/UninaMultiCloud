@@ -4,10 +4,9 @@ import entity.Usa;
 
 import java.util.ArrayList;
 
-
 public interface UsaDAO {
 	
-	Boolean salvaUtilizzo(Usa u);
+	boolean salvaUtilizzo(Usa u);
 	
 	ArrayList<Usa> cercaUtilizziUtente(String email);
 	

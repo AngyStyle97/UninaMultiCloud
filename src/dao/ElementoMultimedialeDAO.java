@@ -1,4 +1,5 @@
 package dao;
+
 import entity.ElementoMultimediale;
 import java.util.ArrayList;
 
@@ -8,7 +9,7 @@ public interface ElementoMultimedialeDAO {
 	
 	boolean eliminaElemento(String  IdElemento);
 	
-	 ElementoMultimediale cercaPerId(String IdElemento);
+    ElementoMultimediale cercaPerId(String IdElemento);
 	
 	boolean  aggiornaElemento(ElementoMultimediale e);
 	
