@@ -1,205 +1,71 @@
-package dao.jdbc;
+package boundary;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import dao.PlaylistDAO;
-import database.DatabaseConnection;
-import entity.Condivisa;
-import entity.Playlist;
-import entity.Privata;
-import entity.Pubblica;
-import entity.Utente;
+import javax.swing.*;
+import java.awt.*;
+import control.Controller;
 
+public class LoginPage extends JFrame {
 
-public class JDBCPlaylistDAO implements PlaylistDAO {
+    private Controller controller;
+    private JTextField txtEmail;
+    private JPasswordField txtPassword;
 
-	@Override
-	public boolean salvaPlaylist(Playlist p) {
-		String query="INSERT INTO playlist(id_playlist, nomeplaylist, email, tipoplaylist) VALUES(?, ?, ?, ?)";
-		
-		try(Connection connection = DatabaseConnection.getConnection();
-				PreparedStatement statement = connection.prepareStatement(query)) {
-			
-			statement.setString(1, p.getIdPlaylist());	     
-			statement.setString(2, p.getNomePlaylist());
-			statement.setString(3, p.getUtente().getEmail());
-			statement.setString(4, p.getTipoPlaylist());
-			     
-			int righeInserite = statement.executeUpdate(); 
-			return righeInserite > 0; 
-			
-		} catch (SQLException e) {
-			e.printStackTrace(); 
-			return false;
-		}
-	}
+    public LoginPage(Controller controller) {
+        this.controller = controller;
 
-	@Override
-	public Playlist cercaPerId(String idPlaylist) {
-		String query="SELECT * FROM playlist WHERE id_playlist = ?";
-		
-		try(Connection connection = DatabaseConnection.getConnection();
-				PreparedStatement statement = connection.prepareStatement(query)) {
-				        
-			statement.setString(1, idPlaylist);
-		                
-			ResultSet rs = statement.executeQuery();
-			
-				if(rs.next()) {
-					return creaPlaylistDaResultSet(rs);
-				}
-			
-		} catch(SQLException e) {  
-			e.printStackTrace();
-		}
-		return null;
-	}
+        setTitle("Login - UninaMultiCloud");
+        setSize(350, 220);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(null);
 
-	@Override
-	public boolean aggiornaPlaylist(Playlist p) {
-		String query="UPDATE playlist SET nomeplaylist = ?, tipoplaylist = ? WHERE id_playlist = ?";
-		
-		try (Connection connection = DatabaseConnection.getConnection();
-				  PreparedStatement statement = connection.prepareStatement(query)) {
-			
-			       statement.setString(1, p.getNomePlaylist());
-			       statement.setString(2, p.getTipoPlaylist());
-			       statement.setString(3, p.getIdPlaylist());
-			       
-					int righeAggiornate = statement.executeUpdate();
-		            return righeAggiornate > 0;
-		            
-			  } catch (SQLException e) {
-				  e.printStackTrace();				  
-				  return false;
-			  }
-			}		
-	
-	@Override
-	public boolean eliminaPlaylist(String idPlaylist) {
-		
-		String query="DELETE FROM playlist WHERE id_playlist = ?";
-		try(Connection connection = DatabaseConnection.getConnection();
-				  PreparedStatement statement = connection.prepareStatement(query)) {
-			
-					  statement.setString(1, idPlaylist);
-					  
-			            int righeEliminate = statement.executeUpdate();
-			            return righeEliminate > 0;
+        JLabel lblEmail = new JLabel("Email:");
+        lblEmail.setBounds(40, 35, 80, 25);
+        add(lblEmail);
 
-			        } catch (SQLException e) {
-			            e.printStackTrace();
-			        	return false;
-				  }
-	}
+        txtEmail = new JTextField();
+        txtEmail.setBounds(130, 35, 160, 25);
+        add(txtEmail);
 
-	@Override
-	public ArrayList<Playlist> cercaPerUtente(String email) {
-		String query="SELECT * FROM playlist WHERE email = ?";
-		ArrayList<Playlist> lista = new ArrayList<>();
-		
-		try(Connection connection = DatabaseConnection.getConnection();
-				  PreparedStatement statement = connection.prepareStatement(query)) {
-			
-			statement.setString(1, email); 
-            ResultSet rs = statement.executeQuery();
-            
-				while (rs.next()) {
-				  lista.add(creaPlaylistDaResultSet(rs));
-				}		       
-		}
-		catch(SQLException e) {  
-			e.printStackTrace();
-		}	
-		return lista;
-	}
+        JLabel lblPassword = new JLabel("Password:");
+        lblPassword.setBounds(40, 75, 80, 25);
+        add(lblPassword);
 
-	@Override
-	public ArrayList<Playlist> cercaPerTipo(String tipoPlaylist) {
-		String query="SELECT * FROM playlist WHERE tipoplaylist = ?";
-		ArrayList<Playlist> lista = new ArrayList<>();
-		
-		try(Connection connection = DatabaseConnection.getConnection();
-				  PreparedStatement statement = connection.prepareStatement(query)) {
-			
-			statement.setString(1, tipoPlaylist); 
-            
-			ResultSet rs = statement.executeQuery();
-			
-				while (rs.next()) {
-				   lista.add(creaPlaylistDaResultSet(rs));
-				}			       
-		}
-		catch(SQLException e) {  
-			e.printStackTrace();
-		}
-		
-		
-		return lista;
-	}
-	
-	 @Override
-	    public boolean aggiungiElemento(String idPlaylist, String idElemento) {
-	        String query = "INSERT INTO ha(id_playlist, id_elemento) VALUES (?, ?)";
+        txtPassword = new JPasswordField();
+        txtPassword.setBounds(130, 75, 160, 25);
+        add(txtPassword);
 
-	        try (Connection connection = DatabaseConnection.getConnection();
-	             PreparedStatement statement = connection.prepareStatement(query)) {
+        JButton btnAccedi = new JButton("Accedi");
+        btnAccedi.setBounds(60, 125, 100, 30);
+        add(btnAccedi);
 
-	            statement.setString(1, idPlaylist);
-	            statement.setString(2, idElemento);
+        JButton btnCancella = new JButton("Cancella");
+        btnCancella.setBounds(180, 125, 100, 30);
+        add(btnCancella);
 
-	            int righeInserite = statement.executeUpdate();
-	            return righeInserite > 0;
+        btnAccedi.addActionListener(e -> {
+            String email = txtEmail.getText();
+            String password = new String(txtPassword.getPassword());
 
-	        } catch (SQLException e) {
-	            e.printStackTrace();
-	            return false;
-	        }
-	    }
+            boolean ok = controller.login(email, password);
 
-	    @Override
-	    public boolean rimuoviElemento(String idPlaylist, String idElemento) {
-	        String query = "DELETE FROM ha WHERE id_playlist = ? AND id_elemento = ?";
+            if (ok) {
+                dispose();
+                controller.mostraMenu();
+            } else {
+                mostraErrore("Credenziali errate");
+            }
+        });
 
-	        try (Connection connection = DatabaseConnection.getConnection();
-	             PreparedStatement statement = connection.prepareStatement(query)) {
+        btnCancella.addActionListener(e -> pulisciCampi());
+    }
 
-	            statement.setString(1, idPlaylist);
-	            statement.setString(2, idElemento);
+    public void mostraErrore(String messaggio) {
+        JOptionPane.showMessageDialog(this, messaggio, "Errore", JOptionPane.ERROR_MESSAGE);
+    }
 
-	            int righeEliminate = statement.executeUpdate();
-	            return righeEliminate > 0;
-
-	        } catch (SQLException e) {
-	            e.printStackTrace();
-	            return false;
-	        }
-	    }
-	
-	private Playlist creaPlaylistDaResultSet(ResultSet rs) throws SQLException {
-	    String id = rs.getString("id_playlist");
-	    String nome = rs.getString("nomeplaylist");
-	    String tipo = rs.getString("tipoplaylist");
-	    String email = rs.getString("email");
-	    
-	    JDBCUtenteDAO utenteDAO = new JDBCUtenteDAO();
-	    Utente u = new Utente(email, null, null, null, null, 0, null);
-	    
-	    switch (tipo.toUpperCase()) {
-	        case "PRIVATA":
-	            return new Privata(id, nome, u);
-	            
-	        case "PUBBLICA":
-	            return new Pubblica(id, nome, u);
-	            
-	        case "CONDIVISA":
-	            return new Condivisa(id, nome, u);
-	            
-	        default:
-	            throw new IllegalArgumentException("Tipo playlist non riconosciuto: " + tipo);
-	    }
-	}
-    
+    public void pulisciCampi() {
+        txtEmail.setText("");
+        txtPassword.setText("");
+    }
+}
