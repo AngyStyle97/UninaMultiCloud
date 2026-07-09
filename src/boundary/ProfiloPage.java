@@ -52,7 +52,7 @@ public class ProfiloPage extends JFrame {
 
         add(txtNome);
 
-        lblCognome = new JLabel("Cognome");
+        lblCognome = new JLabel("Cognnome");
 
         lblCognome.setBounds(40,70,80,25);
 
