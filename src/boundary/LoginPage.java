@@ -39,7 +39,7 @@ public class LoginPage extends JFrame {
         btnAccedi.setBounds(60, 125, 100, 30);
         add(btnAccedi);
 
-        JButton btnCancella = new JButton("Cancella");
+        JButton btnCancella = new JButton("Canceeella");
         btnCancella.setBounds(180, 125, 100, 30);
         add(btnCancella);
 
