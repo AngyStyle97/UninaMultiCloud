@@ -70,15 +70,29 @@ public class VisualizzaPlaylistPage extends JFrame {
 
         btnVisualizzaElemento.addActionListener(e ->
 
-                controller.mostraVisualizzaElementoDaPlaylist(playlist.getIdPlaylist()));
+                controller.mostraVisualizzaElementoDaPlaylist(playlist.getIdPlaylist())
+
+        );
 
         btnRimuoviElemento.addActionListener(e -> {
 
-            String idElemento = JOptionPane.showInputDialog(this, "ID elemento da rimuovere:");
+            String idElemento = JOptionPane.showInputDialog(
+
+                    this,
+
+                    "Inserisci ID elemento da rimuovere:"
+
+            );
 
             if (idElemento != null && !idElemento.isEmpty()) {
 
-                boolean ok = controller.rimuoviElementoDaPlaylist(idElemento, playlist.getIdPlaylist());
+                boolean ok = controller.rimuoviElementoDaPlaylist(
+
+                        idElemento,
+
+                        playlist.getIdPlaylist()
+
+                );
 
                 if (ok) {
 
@@ -94,9 +108,43 @@ public class VisualizzaPlaylistPage extends JFrame {
 
         });
 
-        btnCondividiPlaylist.addActionListener(e ->
+        btnCondividiPlaylist.addActionListener(e -> {
 
-                controller.mostraCondividiPlaylist(playlist));
+            String email = JOptionPane.showInputDialog(
+
+                    this,
+
+                    "Inserisci email utente:",
+
+                    "Condividi Playlist",
+
+                    JOptionPane.QUESTION_MESSAGE
+
+            );
+
+            if (email != null && !email.isEmpty()) {
+
+                boolean ok = controller.condividiPlaylist(
+
+                        playlist.getIdPlaylist(),
+
+                        email
+
+                );
+
+                if (ok) {
+
+                    JOptionPane.showMessageDialog(this, "Playlist condivisa");
+
+                } else {
+
+                    JOptionPane.showMessageDialog(this, "Errore nella condivisione");
+
+                }
+
+            }
+
+        });
 
         btnEliminaPlaylist.addActionListener(e -> {
 
@@ -133,7 +181,4 @@ public class VisualizzaPlaylistPage extends JFrame {
         });
 
         btnEsci.addActionListener(e -> dispose());
-
     }
-
-}
