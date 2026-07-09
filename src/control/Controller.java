@@ -1,4 +1,4 @@
-package Controller;
+package control;
 
 import dao.UtenteDAO;
 import dao.jdbc.JDBCUtenteDAO;
