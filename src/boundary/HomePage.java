@@ -24,7 +24,8 @@ public class HomePage extends JFrame {
     private JButton btnRicercaElemento;
     private JButton btnRicercaPlaylist;
     private JButton btnEsci;
-
+    private JButton btnCreaPlaylist;
+    
     public HomePage(Controller controller) {
 
         this.controller = controller;
