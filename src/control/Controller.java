@@ -879,6 +879,24 @@ public class Controller {
 
     }
 
+    public void mostraCreaPlaylist() {
+
+        if (!utenteAutenticato()) {
+
+            mostraMessaggio("Devi effettuare il login.");
+
+            return;
+
+        }
+
+        CreaPlaylistPage pagina =
+
+                new CreaPlaylistPage(this);
+
+        pagina.setVisible(true);
+
+    }
+    
     private boolean utenteAutenticato() {
 
         return utenteLoggato != null;
@@ -896,5 +914,6 @@ public class Controller {
         );
 
     }
+    
 
 }
