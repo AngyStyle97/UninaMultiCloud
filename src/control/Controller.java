@@ -1,6 +1,6 @@
 package control;
 
-import java.util.ArrayList;
+import java.util.ArrayList; 
 import java.util.Date;
 import javax.swing.JOptionPane;
 import boundary.CaricaElementoPage;
@@ -30,15 +30,10 @@ import entity.Utente;
 public class Controller {
 
     private Utente utenteLoggato;
-
     private UtenteDAO utenteDAO;
-
     private PlaylistDAO playlistDAO;
-
     private ElementoMultimedialeDAO elementoDAO;
-
     private UsaDAO usaDAO;
-
     private CondivisaConDAO condivisaConDAO;
 
     public Controller() {
@@ -169,46 +164,17 @@ public class Controller {
 
     }
 
-    /*
-
-     * Apre CaricaElementoPage e riempie le combo box
-
-     * con elementi e playlist recuperati dal database.
-
-     */
-
     public void mostraCaricaElemento() {
 
         if (!utenteAutenticato()) {
-
             mostraMessaggio("Devi effettuare il login.");
-
             return;
-
         }
 
         CaricaElementoPage pagina =
-
                 new CaricaElementoPage(this);
 
-        ArrayList<ElementoMultimediale> elementi =
-
-                elementoDAO.cercaElementi("");
-
-        ArrayList<Playlist> playlistUtente =
-
-                playlistDAO.cercaPerUtente(
-
-                        utenteLoggato.getEmail()
-
-                );
-
-        pagina.mostraElementi(elementi);
-
-        pagina.mostraPlaylist(playlistUtente);
-
         pagina.setVisible(true);
-
     }
 
     /*

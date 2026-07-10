@@ -1,18 +1,38 @@
 package boundary;
 
-import javax.swing.*; 
-import java.util.ArrayList;
-import entity.ElementoMultimediale;
-import entity.Playlist;
+import java.util.Date;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+
 import control.Controller;
+import entity.Audio;
+import entity.ElementoMultimediale;
+import entity.Video;
 
 public class CaricaElementoPage extends JFrame {
 
     private Controller controller;
-    private JLabel lblElemento;
-    private JLabel lblPlaylist;
-    private JComboBox<String> cmbElemento;
-    private JComboBox<String> cmbPlaylist;
+
+    private JTextField txtId;
+    private JTextField txtTitolo;
+    private JTextField txtDescrizione;
+    private JTextField txtImmagineCopertina;
+
+    private JComboBox<String> cmbTipo;
+
+    private JLabel lblCampo1;
+    private JLabel lblCampo2;
+    private JLabel lblCampo3;
+
+    private JTextField txtCampo1;
+    private JTextField txtCampo2;
+    private JTextField txtCampo3;
+
     private JButton btnCarica;
     private JButton btnAnnulla;
 
@@ -21,152 +41,237 @@ public class CaricaElementoPage extends JFrame {
         this.controller = controller;
 
         setTitle("Carica Elemento");
-
-        setSize(360,220);
-
-        setLocationRelativeTo(null);
-
+        setSize(470, 500);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
+        setLocationRelativeTo(null);
         setLayout(null);
 
-        lblElemento = new JLabel("Inserisci Elemento");
+        JLabel lblId = new JLabel("ID elemento");
+        lblId.setBounds(40, 30, 130, 25);
+        add(lblId);
 
-        lblElemento.setBounds(20,30,130,25);
+        txtId = new JTextField();
+        txtId.setBounds(190, 30, 210, 25);
+        add(txtId);
 
-        add(lblElemento);
+        JLabel lblTitolo = new JLabel("Titolo");
+        lblTitolo.setBounds(40, 70, 130, 25);
+        add(lblTitolo);
 
-        cmbElemento = new JComboBox<>();
+        txtTitolo = new JTextField();
+        txtTitolo.setBounds(190, 70, 210, 25);
+        add(txtTitolo);
 
-        cmbElemento.setBounds(160,30,150,25);
+        JLabel lblDescrizione = new JLabel("Descrizione");
+        lblDescrizione.setBounds(40, 110, 130, 25);
+        add(lblDescrizione);
 
-        add(cmbElemento);
+        txtDescrizione = new JTextField();
+        txtDescrizione.setBounds(190, 110, 210, 25);
+        add(txtDescrizione);
 
-        lblPlaylist = new JLabel("Inserisci Playlist");
+        JLabel lblCopertina = new JLabel("Immagine copertina");
+        lblCopertina.setBounds(40, 150, 140, 25);
+        add(lblCopertina);
 
-        lblPlaylist.setBounds(20,80,130,25);
+        txtImmagineCopertina = new JTextField();
+        txtImmagineCopertina.setBounds(190, 150, 210, 25);
+        add(txtImmagineCopertina);
 
-        add(lblPlaylist);
+        JLabel lblTipo = new JLabel("Tipo elemento");
+        lblTipo.setBounds(40, 190, 130, 25);
+        add(lblTipo);
 
-        cmbPlaylist = new JComboBox<>();
+        cmbTipo = new JComboBox<>();
+        cmbTipo.addItem("Audio");
+        cmbTipo.addItem("Video");
+        cmbTipo.setBounds(190, 190, 210, 25);
+        add(cmbTipo);
 
-        cmbPlaylist.setBounds(160,80,150,25);
+        lblCampo1 = new JLabel();
+        lblCampo1.setBounds(40, 240, 130, 25);
+        add(lblCampo1);
 
-        add(cmbPlaylist);
+        txtCampo1 = new JTextField();
+        txtCampo1.setBounds(190, 240, 210, 25);
+        add(txtCampo1);
+
+        lblCampo2 = new JLabel();
+        lblCampo2.setBounds(40, 280, 130, 25);
+        add(lblCampo2);
+
+        txtCampo2 = new JTextField();
+        txtCampo2.setBounds(190, 280, 210, 25);
+        add(txtCampo2);
+
+        lblCampo3 = new JLabel();
+        lblCampo3.setBounds(40, 320, 130, 25);
+        add(lblCampo3);
+
+        txtCampo3 = new JTextField();
+        txtCampo3.setBounds(190, 320, 210, 25);
+        add(txtCampo3);
 
         btnCarica = new JButton("Carica");
-
-        btnCarica.setBounds(60,140,100,30);
-
+        btnCarica.setBounds(90, 390, 120, 30);
         add(btnCarica);
 
         btnAnnulla = new JButton("Annulla");
-
-        btnAnnulla.setBounds(190,140,100,30);
-
+        btnAnnulla.setBounds(250, 390, 120, 30);
         add(btnAnnulla);
 
-        btnCarica.addActionListener(e -> {
+        aggiornaCampiSpecifici();
 
-            String idElemento =
+        cmbTipo.addActionListener(e -> aggiornaCampiSpecifici());
 
-                    (String) cmbElemento.getSelectedItem();
+        btnCarica.addActionListener(e -> caricaElemento());
 
-            String idPlaylist =
+        btnAnnulla.addActionListener(e -> {
+            dispose();
+            controller.mostraMenu();
+        });
+    }
 
-                    (String) cmbPlaylist.getSelectedItem();
+    private void aggiornaCampiSpecifici() {
 
-            boolean ok = controller.caricaElemento(
+        String tipo = (String) cmbTipo.getSelectedItem();
 
-                    idElemento,
+        txtCampo1.setText("");
+        txtCampo2.setText("");
+        txtCampo3.setText("");
 
-                    idPlaylist
+        if ("Audio".equals(tipo)) {
 
+            lblCampo1.setText("ISRC");
+            lblCampo2.setText("Durata audio");
+
+            lblCampo3.setVisible(false);
+            txtCampo3.setVisible(false);
+
+        } else {
+
+            lblCampo1.setText("Risoluzione");
+            lblCampo2.setText("Formato");
+            lblCampo3.setText("Durata video");
+
+            lblCampo3.setVisible(true);
+            txtCampo3.setVisible(true);
+        }
+    }
+
+    private void caricaElemento() {
+
+        String id = txtId.getText().trim();
+        String titolo = txtTitolo.getText().trim();
+        String descrizione = txtDescrizione.getText().trim();
+        String copertina = txtImmagineCopertina.getText().trim();
+        String tipo = (String) cmbTipo.getSelectedItem();
+
+        if (id.isEmpty()
+                || titolo.isEmpty()
+                || descrizione.isEmpty()) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Compila tutti i campi obbligatori",
+                    "Attenzione",
+                    JOptionPane.WARNING_MESSAGE
             );
 
-            if (ok) {
+            return;
+        }
 
-                JOptionPane.showMessageDialog(
+        try {
 
-                        this,
+            ElementoMultimediale elemento;
 
-                        "Elemento caricato nella playlist"
+            if ("Audio".equals(tipo)) {
 
+                String isrc = txtCampo1.getText().trim();
+                double durataAudio =
+                        Double.parseDouble(txtCampo2.getText().trim());
+
+                if (isrc.isEmpty() || durataAudio <= 0) {
+                    throw new IllegalArgumentException();
+                }
+
+                elemento = new Audio(
+                        id,
+                        descrizione,
+                        new Date(),
+                        titolo,
+                        0,
+                        copertina,
+                        isrc,
+                        durataAudio
                 );
 
             } else {
 
-                JOptionPane.showMessageDialog(
+                String risoluzione = txtCampo1.getText().trim();
+                String formato = txtCampo2.getText().trim();
+                double durataVideo =
+                        Double.parseDouble(txtCampo3.getText().trim());
 
-                        this,
+                if (risoluzione.isEmpty()
+                        || formato.isEmpty()
+                        || durataVideo <= 0) {
 
-                        "Errore durante il caricamento"
+                    throw new IllegalArgumentException();
+                }
 
+                elemento = new Video(
+                        id,
+                        descrizione,
+                        new Date(),
+                        titolo,
+                        0,
+                        copertina,
+                        risoluzione,
+                        formato,
+                        durataVideo
                 );
-
             }
 
-        });
-    }
+            boolean ok = controller.inserisciElemento(elemento);
 
-    public JComboBox<String> getCmbElemento() {
+            if (ok) {
 
-        return cmbElemento;
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Elemento caricato correttamente"
+                );
 
-    }
+                dispose();
+                controller.mostraMenu();
 
-    public JComboBox<String> getCmbPlaylist() {
+            } else {
 
-        return cmbPlaylist;
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Impossibile caricare l'elemento",
+                        "Errore",
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
 
-    }
-    
-    public void mostraElementi(
+        } catch (NumberFormatException ex) {
 
-            ArrayList<ElementoMultimediale> elementi) {
-
-        cmbElemento.removeAllItems();
-
-        if (elementi == null) {
-
-            return;
-
-        }
-
-        for (ElementoMultimediale elemento : elementi) {
-
-            cmbElemento.addItem(
-
-                    elemento.getIdElemento()
-
+            JOptionPane.showMessageDialog(
+                    this,
+                    "La durata deve essere un numero",
+                    "Errore",
+                    JOptionPane.ERROR_MESSAGE
             );
 
-        }
+        } catch (IllegalArgumentException ex) {
 
-    }
-
-    public void mostraPlaylist(
-
-            ArrayList<Playlist> playlist) {
-
-        cmbPlaylist.removeAllItems();
-
-        if (playlist == null) {
-
-            return;
-
-        }
-
-        for (Playlist p : playlist) {
-
-            cmbPlaylist.addItem(
-
-                    p.getIdPlaylist()
-
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Controlla i dati specifici dell'elemento",
+                    "Errore",
+                    JOptionPane.ERROR_MESSAGE
             );
-
         }
-
     }
-
 }

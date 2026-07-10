@@ -13,81 +13,82 @@ import entity.Video;
 
 public class JDBCElementoDAO implements ElementoMultimedialeDAO {
 
-    @Override
+	@Override
+	public boolean salvaElemento(ElementoMultimediale e) {
 
-    public boolean salvaElemento(ElementoMultimediale e) {
+	    String query = "INSERT INTO elemento_multimediale "
+	            + "(id_elemento, descrizione, datacreazione, immaginecopertina, titolo, numerovisualizzazioni, "
+	            + "isrc, durataaudio, risoluzione, formato, duratavideo, tipoelemento) "
+	            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        String query = "INSERT INTO elemento_multimediale "
+	    try (Connection connection = DatabaseConnection.getConnection();
+	         PreparedStatement statement = connection.prepareStatement(query)) {
 
-                + "(id_elemento, descrizione, datacreazione, immaginecopertina, titolo, numerovisualizzazioni, "
+	        statement.setString(1, e.getIdElemento());
+	        statement.setString(2, e.getDescrizione());
+	        statement.setDate(
+	                3,
+	                new java.sql.Date(e.getDataCreazione().getTime())
+	        );
+	        statement.setString(4, e.getImmagineCopertina());
+	        statement.setString(5, e.getTitolo());
+	        statement.setInt(6, e.getNumeroVisualizzazioni());
 
-                + "isrc, durataaudio, risoluzione, formato, duratavideo, tipoelemento) "
+	        if (e instanceof Audio) {
 
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	            Audio a = (Audio) e;
 
-        try (Connection connection = DatabaseConnection.getConnection();
+	            statement.setString(7, a.getIsrc());
+	            statement.setDouble(8, a.getDurataAudio());
 
-             PreparedStatement statement = connection.prepareStatement(query)) {
+	            statement.setNull(9, java.sql.Types.VARCHAR);
+	            statement.setNull(10, java.sql.Types.VARCHAR);
+	            statement.setNull(11, java.sql.Types.DOUBLE);
 
-            statement.setString(1, e.getIdElemento());
+	            statement.setString(12, "Audio");
 
-            statement.setString(2, e.getDescrizione());
+	        } else if (e instanceof Video) {
 
-            statement.setDate(3, new java.sql.Date(e.getDataCreazione().getTime()));
+	            Video v = (Video) e;
 
-            statement.setString(4, e.getImmagineCopertina());
+	            statement.setNull(7, java.sql.Types.VARCHAR);
+	            statement.setNull(8, java.sql.Types.DOUBLE);
 
-            statement.setString(5, e.getTitolo());
+	            statement.setString(9, v.getRisoluzione());
+	            statement.setString(10, v.getFormato());
+	            statement.setDouble(11, v.getDurataVideo());
 
-            statement.setInt(6, e.getNumeroVisualizzazioni());
+	            statement.setString(12, "Video");
 
-            if (e instanceof Audio) {
+	        } else {
 
-                Audio a = (Audio) e;
+	            System.out.println("Tipo di elemento non riconosciuto");
+	            return false;
+	        }
 
-                statement.setString(7, a.getIsrc());
+	        System.out.println(
+	                "Sto inserendo l'elemento: " + e.getTitolo()
+	        );
 
-                statement.setDouble(8, a.getDurataAudio());
+	        int righeInserite = statement.executeUpdate();
 
-                statement.setString(9, null);
+	        System.out.println(
+	                "Righe inserite nel database: " + righeInserite
+	        );
 
-                statement.setString(10, null);
+	        return righeInserite > 0;
 
-                statement.setNull(11, java.sql.Types.DOUBLE);
+	    } catch (SQLException ex) {
 
-                statement.setString(12, "Audio");
+	        System.out.println("ERRORE DURANTE INSERT ELEMENTO");
+	        System.out.println("Messaggio: " + ex.getMessage());
+	        System.out.println("SQLState: " + ex.getSQLState());
+	        System.out.println("Codice errore: " + ex.getErrorCode());
 
-            } else if (e instanceof Video) {
-
-                Video v = (Video) e;
-
-                statement.setString(7, null);
-
-                statement.setNull(8, java.sql.Types.DOUBLE);
-
-                statement.setString(9, v.getRisoluzione());
-
-                statement.setString(10, v.getFormato());
-
-                statement.setDouble(11, v.getDurataVideo());
-
-                statement.setString(12, "Video");
-
-            }
-
-            int righeInserite = statement.executeUpdate();
-
-            return righeInserite > 0;
-
-        } catch (SQLException ex) {
-
-            ex.printStackTrace();
-
-            return false;
-
-        }
-
-    }
+	        ex.printStackTrace();
+	        return false;
+	    }
+	}
 
     @Override
 
