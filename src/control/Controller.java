@@ -26,6 +26,9 @@ import entity.ElementoMultimediale;
 import entity.Playlist;
 import entity.Usa;
 import entity.Utente;
+import dao.CaricaDAO;
+import dao.jdbc.JDBCCaricaDAO;
+import entity.Carica;
 
 public class Controller {
 
@@ -35,18 +38,16 @@ public class Controller {
     private ElementoMultimedialeDAO elementoDAO;
     private UsaDAO usaDAO;
     private CondivisaConDAO condivisaConDAO;
+    private CaricaDAO caricaDAO;
 
     public Controller() {
 
         utenteDAO = new JDBCUtenteDAO();
-
         playlistDAO = new JDBCPlaylistDAO();
-
         elementoDAO = new JDBCElementoDAO();
-
         usaDAO = new JDBCUsaDAO();
-
         condivisaConDAO = new JDBCCondivisaConDAO();
+        caricaDAO = new JDBCCaricaDAO();
 
     }
 
@@ -236,37 +237,80 @@ public class Controller {
      */
 
     public boolean inserisciElemento(
+            ElementoMultimediale elemento,
+            double peso) {
 
-            ElementoMultimediale elemento) {
-
-        if (!utenteAutenticato() || elemento == null) {
+        if (!utenteAutenticato()
+                || elemento == null
+                || peso <= 0) {
 
             return false;
-
         }
 
         ElementoMultimediale esistente =
-
                 elementoDAO.cercaPerId(
-
                         elemento.getIdElemento()
-
                 );
 
         if (esistente != null) {
 
             mostraMessaggio(
-
                     "Esiste già un elemento con questo ID."
-
             );
 
             return false;
-
         }
 
-        return elementoDAO.salvaElemento(elemento);
+        /*
+         * Prima inserisce il nuovo elemento nella tabella
+         * elemento_multimediale.
+         */
+        boolean elementoInserito =
+                elementoDAO.salvaElemento(elemento);
 
+        if (!elementoInserito) {
+            return false;
+        }
+
+        /*
+         * Registra chi ha effettuato il caricamento
+         * nella tabella carica.
+         */
+        Carica caricamento = new Carica(
+                new Date(),
+                peso,
+                elemento,
+                utenteLoggato
+        );
+
+        boolean caricamentoRegistrato =
+                caricaDAO.salvaCaricamento(
+                        caricamento
+                );
+
+        if (!caricamentoRegistrato) {
+
+            mostraMessaggio(
+                    "Elemento inserito, ma caricamento non registrato."
+            );
+
+            return false;
+        }
+
+        /*
+         * Rilegge l'utente perché il trigger dovrebbe aver
+         * incrementato numerocaricamenti nel database.
+         */
+        Utente aggiornato =
+                utenteDAO.cercaEmail(
+                        utenteLoggato.getEmail()
+                );
+
+        if (aggiornato != null) {
+            utenteLoggato = aggiornato;
+        }
+
+        return true;
     }
 
     public void mostraRicercaElemento() {
