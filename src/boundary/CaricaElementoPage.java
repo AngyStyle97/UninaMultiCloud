@@ -1,23 +1,19 @@
 package boundary;
 
-import javax.swing.*;
-
+import javax.swing.*; 
+import java.util.ArrayList;
+import entity.ElementoMultimediale;
+import entity.Playlist;
 import control.Controller;
 
 public class CaricaElementoPage extends JFrame {
 
     private Controller controller;
-
     private JLabel lblElemento;
-
     private JLabel lblPlaylist;
-
     private JComboBox<String> cmbElemento;
-
     private JComboBox<String> cmbPlaylist;
-
     private JButton btnCarica;
-
     private JButton btnAnnulla;
 
     public CaricaElementoPage(Controller controller) {
@@ -70,18 +66,47 @@ public class CaricaElementoPage extends JFrame {
 
         add(btnAnnulla);
 
-        btnCarica.addActionListener(e ->
+        btnCarica.addActionListener(e -> {
 
-            controller.caricaElemento(
+            String idElemento =
 
-                    (String)cmbElemento.getSelectedItem(),
+                    (String) cmbElemento.getSelectedItem();
 
-                    (String)cmbPlaylist.getSelectedItem())
+            String idPlaylist =
 
-        );
+                    (String) cmbPlaylist.getSelectedItem();
 
-        btnAnnulla.addActionListener(e -> dispose());
+            boolean ok = controller.caricaElemento(
 
+                    idElemento,
+
+                    idPlaylist
+
+            );
+
+            if (ok) {
+
+                JOptionPane.showMessageDialog(
+
+                        this,
+
+                        "Elemento caricato nella playlist"
+
+                );
+
+            } else {
+
+                JOptionPane.showMessageDialog(
+
+                        this,
+
+                        "Errore durante il caricamento"
+
+                );
+
+            }
+
+        });
     }
 
     public JComboBox<String> getCmbElemento() {
@@ -93,6 +118,54 @@ public class CaricaElementoPage extends JFrame {
     public JComboBox<String> getCmbPlaylist() {
 
         return cmbPlaylist;
+
+    }
+    
+    public void mostraElementi(
+
+            ArrayList<ElementoMultimediale> elementi) {
+
+        cmbElemento.removeAllItems();
+
+        if (elementi == null) {
+
+            return;
+
+        }
+
+        for (ElementoMultimediale elemento : elementi) {
+
+            cmbElemento.addItem(
+
+                    elemento.getIdElemento()
+
+            );
+
+        }
+
+    }
+
+    public void mostraPlaylist(
+
+            ArrayList<Playlist> playlist) {
+
+        cmbPlaylist.removeAllItems();
+
+        if (playlist == null) {
+
+            return;
+
+        }
+
+        for (Playlist p : playlist) {
+
+            cmbPlaylist.addItem(
+
+                    p.getIdPlaylist()
+
+            );
+
+        }
 
     }
 

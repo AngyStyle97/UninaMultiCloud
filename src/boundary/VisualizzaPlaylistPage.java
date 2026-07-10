@@ -1,25 +1,17 @@
 package boundary;
 
-import javax.swing.*;
-
+import javax.swing.*; 
 import control.Controller;
-
 import entity.Playlist;
 
 public class VisualizzaPlaylistPage extends JFrame {
 
     private Controller controller;
-
     private Playlist playlist;
-
     private JButton btnVisualizzaElemento;
-
     private JButton btnRimuoviElemento;
-
     private JButton btnCondividiPlaylist;
-
     private JButton btnEliminaPlaylist;
-
     private JButton btnEsci;
 
     public VisualizzaPlaylistPage(Controller controller, Playlist playlist) {
@@ -182,3 +174,4 @@ public class VisualizzaPlaylistPage extends JFrame {
 
         btnEsci.addActionListener(e -> dispose());
     }
+}
