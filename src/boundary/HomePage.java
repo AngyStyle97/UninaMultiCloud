@@ -24,7 +24,7 @@ public class HomePage extends JFrame {
         btnCaricaElemento.setBounds(100, 70, 180, 30);
         add(btnCaricaElemento);
 
-        JButton btnVisualizzaElemento = new JButton("Visualizza Elemento");
+        JButton btnVisualizzaElemento = new JButton("Ricerca Elemento");
         btnVisualizzaElemento.setBounds(100, 110, 180, 30);
         add(btnVisualizzaElemento);
 
@@ -40,7 +40,7 @@ public class HomePage extends JFrame {
 
         btnCaricaElemento.addActionListener(e -> controller.mostraCaricaElemento());
 
-        btnVisualizzaElemento.addActionListener(e -> controller.mostraVisualizzaElemento());
+        btnVisualizzaElemento.addActionListener(e -> controller.mostraRicercaElemento());
 
         btnRicercaPlaylist.addActionListener(e -> controller.mostraRicercaPlaylist());
         
