@@ -897,6 +897,131 @@ public class Controller {
 
     }
     
+    public boolean creaPlaylist(
+
+            String idPlaylist,
+
+            String nomePlaylist,
+
+            String tipoPlaylist) {
+
+        if (!utenteAutenticato()) {
+
+            mostraMessaggio("Devi effettuare il login.");
+
+            return false;
+
+        }
+
+        if (idPlaylist == null
+
+                || nomePlaylist == null
+
+                || tipoPlaylist == null) {
+
+            return false;
+
+        }
+
+        idPlaylist = idPlaylist.trim();
+
+        nomePlaylist = nomePlaylist.trim();
+
+        tipoPlaylist = tipoPlaylist.trim();
+
+        if (idPlaylist.isEmpty()
+
+                || nomePlaylist.isEmpty()
+
+                || tipoPlaylist.isEmpty()) {
+
+            return false;
+
+        }
+
+        Playlist esistente =
+
+                playlistDAO.cercaPerId(idPlaylist);
+
+        if (esistente != null) {
+
+            mostraMessaggio(
+
+                    "Esiste già una playlist con questo ID."
+
+            );
+
+            return false;
+
+        }
+
+        Playlist nuovaPlaylist;
+
+        switch (tipoPlaylist.toLowerCase()) {
+
+            case "privata":
+
+                nuovaPlaylist = new Privata(
+
+                        idPlaylist,
+
+                        nomePlaylist,
+
+                        utenteLoggato
+
+                );
+
+                break;
+
+            case "pubblica":
+
+                nuovaPlaylist = new Pubblica(
+
+                        idPlaylist,
+
+                        nomePlaylist,
+
+                        utenteLoggato
+
+                );
+
+                break;
+
+            case "condivisa":
+
+                nuovaPlaylist = new Condivisa(
+
+                        idPlaylist,
+
+                        nomePlaylist,
+
+                        utenteLoggato
+
+                );
+
+                break;
+
+            default:
+
+                mostraMessaggio(
+
+                        "Tipo di playlist non valido."
+
+                );
+
+                return false;
+
+        }
+
+        return playlistDAO.salvaPlaylist(
+
+                nuovaPlaylist
+
+        );
+
+    }
+    
+    
     private boolean utenteAutenticato() {
 
         return utenteLoggato != null;
