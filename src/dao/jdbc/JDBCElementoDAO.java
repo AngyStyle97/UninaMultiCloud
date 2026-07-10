@@ -17,7 +17,7 @@ public class JDBCElementoDAO implements ElementoMultimedialeDAO {
 	public boolean salvaElemento(ElementoMultimediale e) {
 
 	    String query = "INSERT INTO elemento_multimediale "
-	            + "(id_elemento, descrizione, datacreazione, immaginecopertina, titolo, numerovisualizzazioni, "
+	            + "(id_elemento, descrizione, datacreazione, immaginecopertina, titolo, numvisualizzazioni, "
 	            + "isrc, durataaudio, risoluzione, formato, duratavideo, tipoelemento) "
 	            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -228,7 +228,7 @@ public class JDBCElementoDAO implements ElementoMultimedialeDAO {
 
                     rs.getString("titolo"),
                     
-                    rs.getInt("numerovisualizzazioni"),
+                    rs.getInt("numvisualizzazioni"),
                     
                     rs.getString("immaginecopertina"),
 
