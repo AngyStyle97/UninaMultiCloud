@@ -36,13 +36,25 @@ public class HomePage extends JFrame {
         btnEsci.setBounds(100, 240, 180, 30);
         add(btnEsci);
 
-        btnProfilo.addActionListener(e -> controller.mostraProfilo());
+        btnProfilo.addActionListener(e -> 
+                {  controller.mostraProfilo();
+        dispose();
+          });
 
-        btnCaricaElemento.addActionListener(e -> controller.mostraCaricaElemento());
+        btnCaricaElemento.addActionListener(e -> 
+            {    controller.mostraCaricaElemento();
+              dispose();
+            });
+        
+        btnVisualizzaElemento.addActionListener(e ->
+                   {   controller.mostraRicercaElemento();
+               dispose();
+             });
 
-        btnVisualizzaElemento.addActionListener(e -> controller.mostraRicercaElemento());
-
-        btnRicercaPlaylist.addActionListener(e -> controller.mostraRicercaPlaylist());
+        btnRicercaPlaylist.addActionListener(e -> 
+               { controller.mostraRicercaPlaylist();
+               dispose();
+               });
         
 
         btnEsci.addActionListener(e -> {
