@@ -21,7 +21,7 @@ import javax.swing.JPanel;
 import control.Controller;
 
 public class HomePage extends JFrame {
-
+//aggiunto cose
     private Controller controller;
 
     private JPanel pannelloMenu;
