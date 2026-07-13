@@ -96,7 +96,11 @@ public class RicercaPlaylistPage extends JFrame {
 
         btnCerca.addActionListener(e -> cercaPlaylist());
 
-        btnAnnulla.addActionListener(e -> dispose());
+        btnAnnulla.addActionListener(e -> {
+        	
+          dispose();
+          controller.mostraMenu();
+        });
 
         aggiornaDimensioni();
 
