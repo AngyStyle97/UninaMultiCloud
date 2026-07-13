@@ -1,7 +1,19 @@
 package boundary;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 import control.Controller;
 
 public class LoginPage extends JFrame {
@@ -9,63 +21,127 @@ public class LoginPage extends JFrame {
     private Controller controller;
     private JTextField txtEmail;
     private JPasswordField txtPassword;
+    private JLabel lblEmail;
+    private JLabel lblPassword;
+    private JButton btnAccedi;
+    private JButton btnCancella;
+    private JPanel pannelloLogin;
 
     public LoginPage(Controller controller) {
+
         this.controller = controller;
 
         setTitle("Login - UninaMultiCloud");
-        setSize(350, 220);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(500, 320);
+        setMinimumSize(new Dimension(420, 280));
         setLocationRelativeTo(null);
-        setLayout(null);
+        setResizable(true);
+        setLayout(new GridBagLayout());
 
-        JLabel lblEmail = new JLabel("Email:");
-        lblEmail.setBounds(40, 35, 80, 25);
-        add(lblEmail);
+        pannelloLogin = new JPanel(new GridLayout(4, 2, 10, 15));
 
+        lblEmail = new JLabel("Email:");
         txtEmail = new JTextField();
-        txtEmail.setBounds(130, 35, 160, 25);
-        add(txtEmail);
 
-        JLabel lblPassword = new JLabel("Password:");
-        lblPassword.setBounds(40, 75, 80, 25);
-        add(lblPassword);
-
+        lblPassword = new JLabel("Password:");
         txtPassword = new JPasswordField();
-        txtPassword.setBounds(130, 75, 160, 25);
-        add(txtPassword);
 
-        JButton btnAccedi = new JButton("Accedi");
-        btnAccedi.setBounds(60, 125, 100, 30);
-        add(btnAccedi);
+        btnAccedi = new JButton("Accedi");
+        btnCancella = new JButton("Cancella");
 
-        JButton btnCancella = new JButton("Cancella");
-        btnCancella.setBounds(180, 125, 100, 30);
-        add(btnCancella);
+        pannelloLogin.add(lblEmail);
+        pannelloLogin.add(txtEmail);
+
+        pannelloLogin.add(lblPassword);
+        pannelloLogin.add(txtPassword);
+
+        pannelloLogin.add(btnAccedi);
+        pannelloLogin.add(btnCancella);
+
+        add(pannelloLogin, new GridBagConstraints());
+
+        addComponentListener(new ComponentAdapter() {
+
+            @Override
+            public void componentResized(ComponentEvent e) {
+
+                aggiornaDimensioni();
+
+            }
+
+        });
 
         btnAccedi.addActionListener(e -> {
+
             String email = txtEmail.getText();
             String password = new String(txtPassword.getPassword());
 
             boolean ok = controller.login(email, password);
 
             if (ok) {
+
                 dispose();
                 controller.mostraMenu();
+
             } else {
+
                 mostraErrore("Credenziali errate");
+
             }
+
         });
 
         btnCancella.addActionListener(e -> pulisciCampi());
+
+        aggiornaDimensioni();
+    }
+
+    private void aggiornaDimensioni() {
+
+        int larghezza = getContentPane().getWidth();
+        int altezza = getContentPane().getHeight();
+
+        int larghezzaPannello = (int)(larghezza * 0.55);
+        int altezzaPannello = (int)(altezza * 0.50);
+
+        larghezzaPannello = Math.max(300, Math.min(larghezzaPannello, 600));
+        altezzaPannello = Math.max(180, Math.min(altezzaPannello, 260));
+
+        pannelloLogin.setPreferredSize(new Dimension(larghezzaPannello, altezzaPannello));
+
+        int dimensioneFont = Math.min(larghezza / 40, altezza / 22);
+        dimensioneFont = Math.max(13, Math.min(dimensioneFont, 22));
+
+        Font font = new Font("Arial", Font.PLAIN, dimensioneFont);
+
+        lblEmail.setFont(font);
+        lblPassword.setFont(font);
+
+        txtEmail.setFont(font);
+        txtPassword.setFont(font);
+
+        btnAccedi.setFont(font);
+        btnCancella.setFont(font);
+
+        pannelloLogin.revalidate();
+        pannelloLogin.repaint();
     }
 
     public void mostraErrore(String messaggio) {
-        JOptionPane.showMessageDialog(this, messaggio, "Errore", JOptionPane.ERROR_MESSAGE);
+
+        JOptionPane.showMessageDialog(
+                this,
+                messaggio,
+                "Errore",
+                JOptionPane.ERROR_MESSAGE);
+
     }
 
     public void pulisciCampi() {
+
         txtEmail.setText("");
         txtPassword.setText("");
+
     }
 }
