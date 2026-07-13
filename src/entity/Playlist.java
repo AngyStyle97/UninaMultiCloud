@@ -53,6 +53,6 @@ public abstract class Playlist {
 	
 	@Override
 	public String toString() {
-		return "ID playlist: " + idPlaylist + " Nome Playlist: " + nomePlaylist + " Numero di elementi: " + elementi.size();
+		return "ID playlist: " + idPlaylist + " Nome Playlist: " + nomePlaylist;
 	}
 }

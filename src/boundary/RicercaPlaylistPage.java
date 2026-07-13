@@ -34,6 +34,7 @@ public class RicercaPlaylistPage extends JFrame {
     public RicercaPlaylistPage(Controller controller) {
 
         this.controller = controller;
+
         setTitle("Ricerca Playlist");
         setSize(520, 400);
         setMinimumSize(new Dimension(420, 330));
@@ -43,24 +44,30 @@ public class RicercaPlaylistPage extends JFrame {
         setLayout(new GridBagLayout());
 
         pannelloCampi = new JPanel(new GridLayout(2, 2, 12, 18));
+
         lblNome = new JLabel("Nome Playlist");
         txtNomePlaylist = new JTextField();
+
         lblTipo = new JLabel("Tipo Playlist");
+
         cmbTipoPlaylist = new JComboBox<>();
         cmbTipoPlaylist.addItem("Privata");
         cmbTipoPlaylist.addItem("Pubblica");
         cmbTipoPlaylist.addItem("Condivisa");
+
         pannelloCampi.add(lblNome);
         pannelloCampi.add(txtNomePlaylist);
         pannelloCampi.add(lblTipo);
         pannelloCampi.add(cmbTipoPlaylist);
-        
+
         btnCerca = new JButton("Cerca");
         btnAnnulla = new JButton("Annulla");
-        
+
         pannelloPulsanti = new JPanel(new GridLayout(1, 2, 15, 0));
+
         pannelloPulsanti.add(btnCerca);
         pannelloPulsanti.add(btnAnnulla);
+
         pannelloCompleto = new JPanel(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -82,34 +89,36 @@ public class RicercaPlaylistPage extends JFrame {
 
         add(pannelloCompleto, new GridBagConstraints());
 
-        addComponentListener(new ComponentAdapter() {
+        addComponentListener(
+                new ComponentAdapter() {
 
-            @Override
+                    @Override
+                    public void componentResized(
+                            ComponentEvent e) {
 
-            public void componentResized(ComponentEvent e) {
+                        aggiornaDimensioni();
+                    }
+                }
+        );
 
-                aggiornaDimensioni();
-
-            }
-
-        });
-
-        btnCerca.addActionListener(e -> cercaPlaylist());
+        btnCerca.addActionListener(
+                e -> cercaPlaylist()
+        );
 
         btnAnnulla.addActionListener(e -> {
-        	
-          dispose();
-          controller.mostraMenu();
+
+            dispose();
+            controller.mostraMenu();
         });
 
         aggiornaDimensioni();
-
     }
 
     private void aggiornaDimensioni() {
 
         int larghezzaFinestra = getContentPane().getWidth();
         int altezzaFinestra = getContentPane().getHeight();
+
         int larghezzaPannello = (int) (larghezzaFinestra * 0.65);
         int altezzaPannello = (int) (altezzaFinestra * 0.48);
 
@@ -119,22 +128,24 @@ public class RicercaPlaylistPage extends JFrame {
         pannelloCompleto.setPreferredSize(new Dimension(larghezzaPannello, altezzaPannello));
         int dimensioneFont = Math.min(larghezzaFinestra / 40, altezzaFinestra / 22);
         dimensioneFont = Math.max(13, Math.min(dimensioneFont, 22));
+
         Font font = new Font("Arial", Font.PLAIN, dimensioneFont);
 
         lblNome.setFont(font);
         lblTipo.setFont(font);
+
         txtNomePlaylist.setFont(font);
         cmbTipoPlaylist.setFont(font);
+
         btnCerca.setFont(font);
         btnAnnulla.setFont(font);
-        
+
         pannelloCampi.revalidate();
         pannelloCampi.repaint();
         pannelloPulsanti.revalidate();
         pannelloPulsanti.repaint();
         pannelloCompleto.revalidate();
         pannelloCompleto.repaint();
-
     }
 
     private void cercaPlaylist() {
@@ -149,30 +160,55 @@ public class RicercaPlaylistPage extends JFrame {
             JOptionPane.showMessageDialog(this, "Nessuna playlist trovata", "Ricerca Playlist", JOptionPane.INFORMATION_MESSAGE);
 
             return;
-
         }
 
-        Playlist playlistSelezionata = (Playlist) JOptionPane.showInputDialog(this, "Seleziona la playlist:", "Risultati ricerca",
-                        JOptionPane.QUESTION_MESSAGE, null, risultati.toArray(), risultati.get(0));
+        String[] opzioni = new String[risultati.size()];
 
-        if (playlistSelezionata != null) {
+        for (int i = 0; i < risultati.size(); i++) {
 
-            controller.mostraVisualizzaPlaylist(playlistSelezionata);
+            Playlist playlist = risultati.get(i);
 
+            int numeroElementi = controller.contaElementiPlaylist(playlist.getIdPlaylist());
+
+            opzioni[i] = "Playlist " + playlist.getTipoPlaylist() + " - ID: " + playlist.getIdPlaylist() + " - Nome: "
+                            + playlist.getNomePlaylist() + " - Numero elementi: " + numeroElementi;}
+
+        String opzioneSelezionata = (String) JOptionPane.showInputDialog(this, "Seleziona la playlist:",
+                                "Risultati ricerca", JOptionPane.QUESTION_MESSAGE, null, opzioni, opzioni[0]);
+
+        if (opzioneSelezionata == null) {
+            return;
         }
 
+        int indiceSelezionato = -1;
+
+        for (int i = 0; i < opzioni.length; i++) {
+
+            if (opzioni[i].equals(opzioneSelezionata)) {
+
+                indiceSelezionato = i;
+                break;
+            }
+        }
+
+        if (indiceSelezionato == -1) {
+            return;
+        }
+
+        Playlist playlistSelezionata = risultati.get(indiceSelezionato);
+
+        controller.mostraVisualizzaPlaylist(playlistSelezionata);
+
+        dispose();
     }
 
     public JTextField getTxtNomePlaylist() {
 
         return txtNomePlaylist;
-
     }
 
     public JComboBox<String> getCmbTipoPlaylist() {
 
         return cmbTipoPlaylist;
-
     }
-
 }

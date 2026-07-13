@@ -125,8 +125,7 @@ public class JDBCPlaylistDAO implements PlaylistDAO {
 		try(Connection connection = DatabaseConnection.getConnection();
 				  PreparedStatement statement = connection.prepareStatement(query)) {
 			
-			statement.setString(1, tipoPlaylist); 
-            
+			statement.setString(1, tipoPlaylist);    
 			ResultSet rs = statement.executeQuery();
 			
 				while (rs.next()) {
@@ -201,6 +200,31 @@ public class JDBCPlaylistDAO implements PlaylistDAO {
 	        default:
 	            throw new IllegalArgumentException("Tipo playlist non riconosciuto: " + tipo);
 	    }
+	}
+	
+	@Override
+	public int contaElementi(String idPlaylist) {
+
+	    String query = "SELECT COUNT(*) " + "FROM ha " + "WHERE id_playlist = ?";
+
+	    try (Connection connection = DatabaseConnection.getConnection();
+
+	         PreparedStatement statement = connection.prepareStatement(query)) {
+
+	        statement.setString(1, idPlaylist);
+
+	        try (ResultSet rs = statement.executeQuery()) {
+
+	            if (rs.next()) {
+	                return rs.getInt(1);
+	            }
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return 0;
 	}
     
 }

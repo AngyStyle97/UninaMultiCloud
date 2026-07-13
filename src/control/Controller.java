@@ -387,16 +387,29 @@ public class Controller {
         return risultati;
     }
 
-    public void mostraVisualizzaPlaylist(Playlist playlist) {
+    public void mostraVisualizzaPlaylist(
+            Playlist playlist) {
 
         if (playlist == null) {
 
-            mostraMessaggio("Nessuna playlist selezionata.");
+            mostraMessaggio(
+                    "Nessuna playlist selezionata."
+            );
 
             return;
         }
 
-        VisualizzaPlaylistPage pagina = new VisualizzaPlaylistPage(this, playlist);
+        int numeroElementi =
+                playlistDAO.contaElementi(
+                        playlist.getIdPlaylist()
+                );
+
+        VisualizzaPlaylistPage pagina =
+                new VisualizzaPlaylistPage(
+                        this,
+                        playlist,
+                        numeroElementi
+                );
 
         pagina.setVisible(true);
     }
@@ -618,9 +631,7 @@ public class Controller {
             return false;
         }
 
-        if (idPlaylist == null
-                || nomePlaylist == null
-                || tipoPlaylist == null) {
+        if (idPlaylist == null || nomePlaylist == null || tipoPlaylist == null) {
 
             return false;
         }
@@ -629,9 +640,7 @@ public class Controller {
         nomePlaylist = nomePlaylist.trim();
         tipoPlaylist = tipoPlaylist.trim();
 
-        if (idPlaylist.isEmpty()
-                || nomePlaylist.isEmpty()
-                || tipoPlaylist.isEmpty()) {
+        if (idPlaylist.isEmpty() || nomePlaylist.isEmpty() || tipoPlaylist.isEmpty()) {
 
             return false;
         }
@@ -687,5 +696,15 @@ public class Controller {
     private void mostraMessaggio(String messaggio) {
 
         JOptionPane.showMessageDialog(null, messaggio);
+    }
+    
+    public int contaElementiPlaylist(String idPlaylist) {
+
+        if (idPlaylist == null || idPlaylist.trim().isEmpty()) {
+
+            return 0;
+        }
+
+        return playlistDAO.contaElementi(idPlaylist.trim());
     }
 }

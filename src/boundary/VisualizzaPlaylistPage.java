@@ -1,6 +1,17 @@
 package boundary;
 
-import javax.swing.*; 
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import control.Controller;
 import entity.Playlist;
 
@@ -8,170 +19,215 @@ public class VisualizzaPlaylistPage extends JFrame {
 
     private Controller controller;
     private Playlist playlist;
+    private int numeroElementi;
+    private JLabel lblTitoloPlaylist;
+    private JLabel lblNumeroElementi;
     private JButton btnVisualizzaElemento;
     private JButton btnRimuoviElemento;
     private JButton btnCondividiPlaylist;
     private JButton btnEliminaPlaylist;
-    private JButton btnEsci;
+    private JButton btnIndietro;
+    private JPanel pannelloInformazioni;
+    private JPanel pannelloPulsanti;
+    private JPanel pannelloCompleto;
 
-    public VisualizzaPlaylistPage(Controller controller, Playlist playlist) {
+    public VisualizzaPlaylistPage(Controller controller, Playlist playlist, int numeroElementi) {
 
         this.controller = controller;
-
         this.playlist = playlist;
+        this.numeroElementi = numeroElementi;
 
         setTitle("Visualizza Playlist");
-
-        setSize(300, 260);
-
+        setSize(520, 500);
+        setMinimumSize(new Dimension(400, 420));
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         setLocationRelativeTo(null);
+        setResizable(true);
 
-        setLayout(null);
+        setLayout(new GridBagLayout());
+
+        pannelloInformazioni = new JPanel(new GridLayout(2, 1, 0, 10));
+
+        lblTitoloPlaylist = new JLabel("Playlist: " + playlist.getNomePlaylist(), JLabel.CENTER);
+        lblNumeroElementi = new JLabel("Numero elementi: " + numeroElementi, JLabel.CENTER);
+        
+        pannelloInformazioni.add(lblTitoloPlaylist);
+        pannelloInformazioni.add(lblNumeroElementi);   
+        pannelloPulsanti = new JPanel(new GridLayout(5, 1, 0,12));
 
         btnVisualizzaElemento = new JButton("Visualizza Elemento");
-
-        btnVisualizzaElemento.setBounds(50, 25, 180, 30);
-
-        add(btnVisualizzaElemento);
-
         btnRimuoviElemento = new JButton("Rimuovi Elemento");
-
-        btnRimuoviElemento.setBounds(50, 65, 180, 30);
-
-        add(btnRimuoviElemento);
-
         btnCondividiPlaylist = new JButton("Condividi Playlist");
-
-        btnCondividiPlaylist.setBounds(50, 105, 180, 30);
-
-        add(btnCondividiPlaylist);
-
         btnEliminaPlaylist = new JButton("Elimina Playlist");
+        btnIndietro = new JButton("Indietro");
 
-        btnEliminaPlaylist.setBounds(50, 145, 180, 30);
+        pannelloPulsanti.add(btnVisualizzaElemento);
+        pannelloPulsanti.add(btnRimuoviElemento);
+        pannelloPulsanti.add(btnCondividiPlaylist);
+        pannelloPulsanti.add(btnEliminaPlaylist);
+        pannelloPulsanti.add(btnIndietro);
+        pannelloCompleto = new JPanel(new GridBagLayout());
 
-        add(btnEliminaPlaylist);
+        GridBagConstraints gbc =new GridBagConstraints();
 
-        btnEsci = new JButton("Esci");
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 0.0;
 
-        btnEsci.setBounds(150, 185, 80, 25);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        add(btnEsci);
+        pannelloCompleto.add(pannelloInformazioni, gbc);
 
-        btnVisualizzaElemento.addActionListener(e ->
+        gbc.gridy = 1;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new java.awt.Insets(25, 0, 0, 0);
 
-                controller.mostraVisualizzaElementoDaPlaylist(playlist.getIdPlaylist())
+        pannelloCompleto.add(pannelloPulsanti,gbc);
 
+        add(pannelloCompleto, new GridBagConstraints());
+
+        addComponentListener(new ComponentAdapter() {
+
+                    @Override
+                    public void componentResized(ComponentEvent e) {
+
+                        aggiornaDimensioni();
+                    }
+                }
         );
+
+        btnVisualizzaElemento.addActionListener(
+                e -> controller.mostraVisualizzaElementoDaPlaylist(playlist.getIdPlaylist()));
 
         btnRimuoviElemento.addActionListener(e -> {
 
-            String idElemento = JOptionPane.showInputDialog(
+            String idElemento = JOptionPane.showInputDialog(this,"Inserisci ID elemento da rimuovere:");
 
-                    this,
-
-                    "Inserisci ID elemento da rimuovere:"
-
-            );
-
-            if (idElemento != null && !idElemento.isEmpty()) {
-
-                boolean ok = controller.rimuoviElementoDaPlaylist(
-
-                        idElemento,
-
-                        playlist.getIdPlaylist()
-
-                );
-
-                if (ok) {
-
-                    JOptionPane.showMessageDialog(this, "Elemento rimosso dalla playlist");
-
-                } else {
-
-                    JOptionPane.showMessageDialog(this, "Errore rimozione elemento");
-
-                }
-
+            if (idElemento == null) {
+                return;
             }
 
+            idElemento = idElemento.trim();
+
+            if (idElemento.isEmpty()) {
+
+                JOptionPane.showMessageDialog(this, "Inserisci un ID elemento valido", "Attenzione", JOptionPane.WARNING_MESSAGE);
+
+                return;
+            }
+
+            boolean ok = controller.rimuoviElementoDaPlaylist(idElemento, playlist.getIdPlaylist());
+
+            if (ok) {
+                numeroElementi = controller.contaElementiPlaylist(playlist.getIdPlaylist());
+                lblNumeroElementi.setText("Numero elementi: " + numeroElementi);
+
+                JOptionPane.showMessageDialog(this, "Elemento rimosso dalla playlist");
+
+            } else {
+
+                JOptionPane.showMessageDialog(this, "Errore nella rimozione dell'elemento", "Errore", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         btnCondividiPlaylist.addActionListener(e -> {
 
-            String email = JOptionPane.showInputDialog(
+            String email = JOptionPane.showInputDialog(this, "Condividi Playlist", JOptionPane.QUESTION_MESSAGE);
 
-                    this,
-
-                    "Inserisci email utente:",
-
-                    "Condividi Playlist",
-
-                    JOptionPane.QUESTION_MESSAGE
-
-            );
-
-            if (email != null && !email.isEmpty()) {
-
-                boolean ok = controller.condividiPlaylist(
-
-                        playlist.getIdPlaylist(),
-
-                        email
-
-                );
-
-                if (ok) {
-
-                    JOptionPane.showMessageDialog(this, "Playlist condivisa");
-
-                } else {
-
-                    JOptionPane.showMessageDialog(this, "Errore nella condivisione");
-
-                }
-
+            if (email == null) {
+                return;
             }
 
+            email = email.trim();
+
+            if (email.isEmpty()) {
+
+                JOptionPane.showMessageDialog(this, "Inserisci una email valida", "Attenzione", JOptionPane.WARNING_MESSAGE);
+
+                return;
+            }
+
+            boolean ok = controller.condividiPlaylist(playlist.getIdPlaylist(), email);
+
+            if (ok) {
+
+                JOptionPane.showMessageDialog(this, "Playlist condivisa correttamente");
+
+            } else {
+
+                JOptionPane.showMessageDialog(this, "Errore nella condivisione", "Errore", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         btnEliminaPlaylist.addActionListener(e -> {
 
-            int scelta = JOptionPane.showConfirmDialog(
+            int scelta = JOptionPane.showConfirmDialog(this, "Sei sicuro di voler eliminare la playlist?", "Conferma eliminazione",
+                    		JOptionPane.YES_NO_OPTION);
 
-                    this,
+            if (scelta != JOptionPane.YES_OPTION) {
 
-                    "Sei sicuro?",
-
-                    "Messaggio",
-
-                    JOptionPane.YES_NO_OPTION
-
-            );
-
-            if (scelta == JOptionPane.YES_OPTION) {
-
-                boolean ok = controller.eliminaPlaylist(playlist.getIdPlaylist());
-
-                if (ok) {
-
-                    JOptionPane.showMessageDialog(this, "Playlist eliminata");
-
-                    dispose();
-
-                } else {
-
-                    JOptionPane.showMessageDialog(this, "Errore eliminazione playlist");
-
-                }
-
+                return;
             }
 
+            boolean ok = controller.eliminaPlaylist(playlist.getIdPlaylist());
+
+            if (ok) {
+
+                JOptionPane.showMessageDialog(this, "Playlist eliminata correttamente");
+
+                dispose();
+                controller.mostraMenu();
+
+            } else {
+
+                JOptionPane.showMessageDialog(this, "Errore nell'eliminazione della playlist", "Errore", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
-        btnEsci.addActionListener(e -> dispose());
+        btnIndietro.addActionListener(e -> {
+
+            dispose();
+            controller.mostraRicercaPlaylist();
+        });
+
+        aggiornaDimensioni();
+    }
+
+    private void aggiornaDimensioni() {
+
+        int larghezzaFinestra = getContentPane().getWidth();
+        int altezzaFinestra = getContentPane().getHeight();
+        int larghezzaPannello = (int) (larghezzaFinestra * 0.60);
+        int altezzaPannello = (int) (altezzaFinestra * 0.72);
+
+        larghezzaPannello = Math.max(300, Math.min(larghezzaPannello, 620));
+        altezzaPannello = Math.max(330, Math.min(altezzaPannello, 560));
+
+        pannelloCompleto.setPreferredSize(new Dimension(larghezzaPannello, altezzaPannello));
+
+        int dimensioneFont = Math.min(larghezzaFinestra / 40, altezzaFinestra / 28);
+        dimensioneFont = Math.max(13, Math.min(dimensioneFont, 22));
+
+        Font fontNormale = new Font("Arial", Font.PLAIN, dimensioneFont);
+        Font fontTitolo = new Font("Arial", Font.BOLD, dimensioneFont + 1);
+
+        lblTitoloPlaylist.setFont(fontTitolo);
+        lblNumeroElementi.setFont(fontNormale);
+        
+        btnVisualizzaElemento.setFont(fontNormale);
+        btnRimuoviElemento.setFont(fontNormale);
+        btnCondividiPlaylist.setFont(fontNormale);
+        btnEliminaPlaylist.setFont(fontNormale);
+        btnIndietro.setFont(fontNormale);
+
+        pannelloInformazioni.revalidate();
+        pannelloInformazioni.repaint();
+        pannelloPulsanti.revalidate();
+        pannelloPulsanti.repaint();
+        pannelloCompleto.revalidate();
+        pannelloCompleto.repaint();
     }
 }

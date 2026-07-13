@@ -72,9 +72,7 @@ public class ReportPlaylistPage extends JFrame {
         );
     }
 
-    public void aggiornaReport(
-            int numeroPlaylist,
-            int numeroCaricamenti) {
+    public void aggiornaReport(int numeroPlaylist, int numeroCaricamenti) {
 
         this.numeroPlaylist = numeroPlaylist;
         this.numeroCaricamenti = numeroCaricamenti;
