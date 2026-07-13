@@ -134,7 +134,11 @@ public class RicercaElementoPage extends JFrame {
             controller.mostraRiproduzioneElemento(elementoSelezionato);
             });
 
-        btnAnnulla.addActionListener(e -> dispose());
+        btnAnnulla.addActionListener(e -> {
+        	
+         dispose();
+         controller.mostraProfilo();
+        });
 
         aggiornaDimensioni();
 
@@ -192,8 +196,7 @@ public class RicercaElementoPage extends JFrame {
 
     public void mostraRisultati(
 
-            ArrayList<ElementoMultimediale> risultati) {
-        modelloLista.clear();
+            ArrayList<ElementoMultimediale> risultati) {modelloLista.clear();
 
         if (risultati == null || risultati.isEmpty()) {
 
