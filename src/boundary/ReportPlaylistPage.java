@@ -1,13 +1,14 @@
 package boundary;
 
-import java.awt.BorderLayout; 
+import java.awt.BorderLayout;
 import java.awt.Font;
-
+import java.awt.GridLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -19,18 +20,14 @@ import control.Controller;
 public class ReportPlaylistPage extends JFrame {
 
     private Controller controller;
-
     private int numeroPlaylist;
     private int numeroCaricamenti;
-
     private JLabel lblNumeroPlaylist;
     private JLabel lblNumeroCaricamenti;
-    private JButton btnEsci;
+    private JButton btnIndietro;
+    private DefaultCategoryDataset dataset;
 
-    public ReportPlaylistPage(
-            Controller controller,
-            int numeroPlaylist,
-            int numeroCaricamenti) {
+    public ReportPlaylistPage(Controller controller, int numeroPlaylist, int numeroCaricamenti) {
 
         this.controller = controller;
         this.numeroPlaylist = numeroPlaylist;
@@ -42,80 +39,54 @@ public class ReportPlaylistPage extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        /*
-         * Pannello superiore contenente i dati numerici.
-         */
-        JPanel pannelloDati = new JPanel();
-        pannelloDati.setLayout(null);
-        pannelloDati.setPreferredSize(new java.awt.Dimension(650, 100));
-
-        lblNumeroPlaylist = new JLabel(
-                "Numero playlist: " + numeroPlaylist
-        );
-        lblNumeroPlaylist.setBounds(80, 20, 220, 30);
+        JPanel pannelloDati = new JPanel(new GridLayout(1, 2, 20, 0));
+        lblNumeroPlaylist = new JLabel("Numero playlist: " + numeroPlaylist, JLabel.CENTER);
         lblNumeroPlaylist.setFont(new Font("Arial", Font.BOLD, 16));
-        pannelloDati.add(lblNumeroPlaylist);
+        lblNumeroCaricamenti = new JLabel("Numero caricamenti: " + numeroCaricamenti, JLabel.CENTER);
+        lblNumeroCaricamenti.setFont(new Font("Arial", Font.BOLD, 16));
 
-        lblNumeroCaricamenti = new JLabel(
-                "Numero caricamenti: " + numeroCaricamenti
-        );
-        lblNumeroCaricamenti.setBounds(330, 20, 250, 30);
-        lblNumeroCaricamenti.setFont(
-                new Font("Arial", Font.BOLD, 16)
-        );
+        pannelloDati.add(lblNumeroPlaylist);
         pannelloDati.add(lblNumeroCaricamenti);
 
         add(pannelloDati, BorderLayout.NORTH);
 
-        /*
-         * Creazione del dataset usato da JFreeChart.
-         */
-        DefaultCategoryDataset dataset =
-                new DefaultCategoryDataset();
+        dataset = new DefaultCategoryDataset();     
+        dataset.addValue(numeroPlaylist,"Quantità", "Playlist");
+        dataset.addValue( numeroCaricamenti, "Quantità", "Caricamenti");
 
-        dataset.addValue(
-                numeroPlaylist,
-                "Quantità",
-                "Playlist"
-        );
+        JFreeChart grafico = ChartFactory.createBarChart("Report attività utente", "Categoria", "Numero",
+                             dataset, PlotOrientation.VERTICAL, false, true, false);
 
-        dataset.addValue(
-                numeroCaricamenti,
-                "Quantità",
-                "Caricamenti"
-        );
-
-        /*
-         * Creazione del grafico a barre.
-         */
-        JFreeChart grafico = ChartFactory.createBarChart(
-                "Report attività utente",
-                "Categoria",
-                "Numero",
-                dataset,
-                PlotOrientation.VERTICAL,
-                false,
-                true,
-                false
-        );
-
-        /*
-         * ChartPanel consente di inserire il grafico
-         * all'interno della finestra Swing.
-         */
         ChartPanel pannelloGrafico = new ChartPanel(grafico);
         add(pannelloGrafico, BorderLayout.CENTER);
 
-        /*
-         * Pannello inferiore con il pulsante Esci.
-         */
         JPanel pannelloPulsanti = new JPanel();
 
-        btnEsci = new JButton("Esci");
-        pannelloPulsanti.add(btnEsci);
+        btnIndietro = new JButton("Indietro");
+        pannelloPulsanti.add(btnIndietro);
 
         add(pannelloPulsanti, BorderLayout.SOUTH);
 
-        btnEsci.addActionListener(e -> dispose());
+        btnIndietro.addActionListener(e ->
+                controller.tornaAlProfiloDalReport()
+        );
+    }
+
+    public void aggiornaReport(
+            int numeroPlaylist,
+            int numeroCaricamenti) {
+
+        this.numeroPlaylist = numeroPlaylist;
+        this.numeroCaricamenti = numeroCaricamenti;
+
+        lblNumeroPlaylist.setText("Numero playlist: " + numeroPlaylist);
+        lblNumeroCaricamenti.setText("Numero caricamenti: " + numeroCaricamenti);
+
+        dataset.clear();
+        dataset.addValue(numeroPlaylist,"Quantità", "Playlist");
+        dataset.addValue(numeroCaricamenti, "Quantità", "Caricamenti");
+
+        revalidate();
+        repaint();
     }
 }

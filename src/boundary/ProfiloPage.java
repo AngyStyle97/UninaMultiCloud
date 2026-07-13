@@ -1,12 +1,15 @@
 package boundary;
 
 import java.awt.Dimension;
+
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -24,13 +27,13 @@ public class ProfiloPage extends JFrame {
     private JTextField txtCognome;
     private JTextField txtEmail;
     private JButton btnReportPlaylist;
-    private JButton btnEsci;
+    private JButton btnIndietro;
     private JPanel pannelloProfilo;
 
     public ProfiloPage(Controller controller) {
 
         this.controller = controller;
-        
+
         setTitle("Profilo");
         setSize(500, 420);
         setMinimumSize(new Dimension(400, 340));
@@ -52,7 +55,7 @@ public class ProfiloPage extends JFrame {
         txtEmail.setEditable(false);
 
         btnReportPlaylist = new JButton("Report Playlist");
-        btnEsci = new JButton("Indietro");
+        btnIndietro = new JButton("Indietro");
 
         pannelloProfilo.add(lblNome);
         pannelloProfilo.add(txtNome);
@@ -63,34 +66,29 @@ public class ProfiloPage extends JFrame {
         pannelloProfilo.add(new JLabel(""));
         pannelloProfilo.add(btnReportPlaylist);
         pannelloProfilo.add(new JLabel(""));
-        pannelloProfilo.add(btnEsci);
-        
+        pannelloProfilo.add(btnIndietro);
+
         add(pannelloProfilo, new GridBagConstraints());
 
         addComponentListener(new ComponentAdapter() {
 
-            @Override
+        @Override
+        public void componentResized(ComponentEvent e) {
 
-            public void componentResized(ComponentEvent e) {
-
-                aggiornaDimensioni();
-
-            }
-
-        });
+                        aggiornaDimensioni();
+                    }
+                }
+        );
 
         btnReportPlaylist.addActionListener(e ->
+                controller.mostraReportPlaylist()
+        );
 
-                controller.mostraReportPlaylist());
-
-        btnEsci.addActionListener(e -> {
-        
-        dispose();
-        controller.mostraMenu();
-        });
+        btnIndietro.addActionListener(e ->
+                controller.tornaAlMenuDalProfilo()
+        );
 
         aggiornaDimensioni();
-
     }
 
     private void aggiornaDimensioni() {
@@ -112,23 +110,22 @@ public class ProfiloPage extends JFrame {
         lblNome.setFont(font);
         lblCognome.setFont(font);
         lblEmail.setFont(font);
+
         txtNome.setFont(font);
         txtCognome.setFont(font);
         txtEmail.setFont(font);
+
         btnReportPlaylist.setFont(font);
-        btnEsci.setFont(font);
+        btnIndietro.setFont(font);
 
         pannelloProfilo.revalidate();
         pannelloProfilo.repaint();
-
     }
 
-    public void mostraProfilo(String nome, String cognome, String email) {
+    public void mostraProfilo(String nome, String cognome,String email) {
 
         txtNome.setText(nome);
         txtCognome.setText(cognome);
         txtEmail.setText(email);
-
     }
-
 }
