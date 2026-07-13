@@ -122,8 +122,10 @@ public class VisualizzaPlaylistPage extends JFrame {
             boolean ok = controller.rimuoviElementoDaPlaylist(idElemento, playlist.getIdPlaylist());
 
             if (ok) {
-                numeroElementi = controller.contaElementiPlaylist(playlist.getIdPlaylist());
-                lblNumeroElementi.setText("Numero elementi: " + numeroElementi);
+
+                this.numeroElementi = controller.contaElementiPlaylist(playlist.getIdPlaylist());
+
+                lblNumeroElementi.setText("Numero elementi: " + this.numeroElementi);
 
                 JOptionPane.showMessageDialog(this, "Elemento rimosso dalla playlist");
 
