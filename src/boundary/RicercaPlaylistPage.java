@@ -1,121 +1,174 @@
 package boundary;
 
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
-
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
-
 import control.Controller;
 import entity.Playlist;
 
 public class RicercaPlaylistPage extends JFrame {
 
     private Controller controller;
-
     private JLabel lblNome;
     private JLabel lblTipo;
-
     private JTextField txtNomePlaylist;
     private JComboBox<String> cmbTipoPlaylist;
-
     private JButton btnCerca;
     private JButton btnAnnulla;
+    private JPanel pannelloCampi;
+    private JPanel pannelloPulsanti;
+    private JPanel pannelloCompleto;
 
     public RicercaPlaylistPage(Controller controller) {
 
         this.controller = controller;
-
         setTitle("Ricerca Playlist");
-        setSize(360, 230);
+        setSize(520, 400);
+        setMinimumSize(new Dimension(420, 330));
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLayout(null);
+        setResizable(true);
+        setLayout(new GridBagLayout());
 
+        pannelloCampi = new JPanel(new GridLayout(2, 2, 12, 18));
         lblNome = new JLabel("Nome Playlist");
-        lblNome.setBounds(30, 30, 110, 25);
-        add(lblNome);
-
         txtNomePlaylist = new JTextField();
-        txtNomePlaylist.setBounds(150, 30, 150, 25);
-        add(txtNomePlaylist);
-
         lblTipo = new JLabel("Tipo Playlist");
-        lblTipo.setBounds(30, 80, 110, 25);
-        add(lblTipo);
-
         cmbTipoPlaylist = new JComboBox<>();
-
         cmbTipoPlaylist.addItem("Privata");
         cmbTipoPlaylist.addItem("Pubblica");
         cmbTipoPlaylist.addItem("Condivisa");
-
-        cmbTipoPlaylist.setBounds(150, 80, 150, 25);
-        add(cmbTipoPlaylist);
-
+        pannelloCampi.add(lblNome);
+        pannelloCampi.add(txtNomePlaylist);
+        pannelloCampi.add(lblTipo);
+        pannelloCampi.add(cmbTipoPlaylist);
+        
         btnCerca = new JButton("Cerca");
-        btnCerca.setBounds(60, 150, 100, 30);
-        add(btnCerca);
-
         btnAnnulla = new JButton("Annulla");
-        btnAnnulla.setBounds(190, 150, 100, 30);
-        add(btnAnnulla);
+        
+        pannelloPulsanti = new JPanel(new GridLayout(1, 2, 15, 0));
+        pannelloPulsanti.add(btnCerca);
+        pannelloPulsanti.add(btnAnnulla);
+        pannelloCompleto = new JPanel(new GridBagLayout());
+
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+
+        pannelloCompleto.add(pannelloCampi, gbc);
+
+        gbc.gridy = 1;
+        gbc.weighty = 0.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new java.awt.Insets(25, 0, 0, 0);
+
+        pannelloCompleto.add(pannelloPulsanti, gbc);
+
+        add(pannelloCompleto, new GridBagConstraints());
+
+        addComponentListener(new ComponentAdapter() {
+
+            @Override
+
+            public void componentResized(ComponentEvent e) {
+
+                aggiornaDimensioni();
+
+            }
+
+        });
 
         btnCerca.addActionListener(e -> cercaPlaylist());
 
         btnAnnulla.addActionListener(e -> dispose());
+
+        aggiornaDimensioni();
+
+    }
+
+    private void aggiornaDimensioni() {
+
+        int larghezzaFinestra = getContentPane().getWidth();
+        int altezzaFinestra = getContentPane().getHeight();
+        int larghezzaPannello = (int) (larghezzaFinestra * 0.65);
+        int altezzaPannello = (int) (altezzaFinestra * 0.48);
+
+        larghezzaPannello = Math.max(330, Math.min(larghezzaPannello, 650));
+        altezzaPannello = Math.max(190, Math.min(altezzaPannello, 330));
+
+        pannelloCompleto.setPreferredSize(new Dimension(larghezzaPannello, altezzaPannello));
+        int dimensioneFont = Math.min(larghezzaFinestra / 40, altezzaFinestra / 22);
+        dimensioneFont = Math.max(13, Math.min(dimensioneFont, 22));
+        Font font = new Font("Arial", Font.PLAIN, dimensioneFont);
+
+        lblNome.setFont(font);
+        lblTipo.setFont(font);
+        txtNomePlaylist.setFont(font);
+        cmbTipoPlaylist.setFont(font);
+        btnCerca.setFont(font);
+        btnAnnulla.setFont(font);
+        
+        pannelloCampi.revalidate();
+        pannelloCampi.repaint();
+        pannelloPulsanti.revalidate();
+        pannelloPulsanti.repaint();
+        pannelloCompleto.revalidate();
+        pannelloCompleto.repaint();
+
     }
 
     private void cercaPlaylist() {
 
-        String nome =
-                txtNomePlaylist.getText().trim();
+        String nome = txtNomePlaylist.getText().trim();
+        String tipo = (String) cmbTipoPlaylist.getSelectedItem();
 
-        String tipo =
-                (String) cmbTipoPlaylist.getSelectedItem();
-
-        ArrayList<Playlist> risultati =
-                controller.cercaPlaylist(nome, tipo);
+        ArrayList<Playlist> risultati = controller.cercaPlaylist(nome, tipo);
 
         if (risultati == null || risultati.isEmpty()) {
 
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Nessuna playlist trovata",
-                    "Ricerca Playlist",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+            JOptionPane.showMessageDialog(this, "Nessuna playlist trovata", "Ricerca Playlist", JOptionPane.INFORMATION_MESSAGE);
 
             return;
+
         }
 
-        Playlist playlistSelezionata =
-                (Playlist) JOptionPane.showInputDialog(
-                        this,
-                        "Seleziona la playlist:",
-                        "Risultati ricerca",
-                        JOptionPane.QUESTION_MESSAGE,
-                        null,
-                        risultati.toArray(),
-                        risultati.get(0)
-                );
+        Playlist playlistSelezionata = (Playlist) JOptionPane.showInputDialog(this, "Seleziona la playlist:", "Risultati ricerca",
+                        JOptionPane.QUESTION_MESSAGE, null, risultati.toArray(), risultati.get(0));
 
         if (playlistSelezionata != null) {
 
-            controller.mostraVisualizzaPlaylist(
-                    playlistSelezionata
-            );
+            controller.mostraVisualizzaPlaylist(playlistSelezionata);
+
         }
+
     }
 
     public JTextField getTxtNomePlaylist() {
+
         return txtNomePlaylist;
+
     }
 
     public JComboBox<String> getCmbTipoPlaylist() {
+
         return cmbTipoPlaylist;
+
     }
+
 }
