@@ -1,96 +1,83 @@
 package boundary;
 
-import javax.swing.*;
-
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import control.Controller;
 
 public class ProfiloPage extends JFrame {
 
     private Controller controller;
-
     private JLabel lblNome;
-
     private JLabel lblCognome;
-
     private JLabel lblEmail;
-
     private JTextField txtNome;
-
     private JTextField txtCognome;
-
     private JTextField txtEmail;
-
     private JButton btnReportPlaylist;
-
     private JButton btnEsci;
+    private JPanel pannelloProfilo;
 
     public ProfiloPage(Controller controller) {
 
         this.controller = controller;
-
+        
         setTitle("Profilo");
-
-        setSize(350,300);
-
+        setSize(500, 420);
+        setMinimumSize(new Dimension(400, 340));
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
         setLocationRelativeTo(null);
+        setResizable(true);
+        setLayout(new GridBagLayout());
 
-        setLayout(null);
+        pannelloProfilo = new JPanel(new GridLayout(5, 2, 12, 15));
 
         lblNome = new JLabel("Nome");
-
-        lblNome.setBounds(40,30,80,25);
-
-        add(lblNome);
-
         txtNome = new JTextField();
-
-        txtNome.setBounds(130,30,150,25);
-
         txtNome.setEditable(false);
-
-        add(txtNome);
-
-        lblCognome = new JLabel("Cognnome");
-
-        lblCognome.setBounds(40,70,80,25);
-
-        add(lblCognome);
-
+        lblCognome = new JLabel("Cognome");
         txtCognome = new JTextField();
-
-        txtCognome.setBounds(130,70,150,25);
-
         txtCognome.setEditable(false);
-
-        add(txtCognome);
-
         lblEmail = new JLabel("Email");
-
-        lblEmail.setBounds(40,110,80,25);
-
-        add(lblEmail);
-
         txtEmail = new JTextField();
-
-        txtEmail.setBounds(130,110,150,25);
-
         txtEmail.setEditable(false);
 
-        add(txtEmail);
-
         btnReportPlaylist = new JButton("Report Playlist");
-
-        btnReportPlaylist.setBounds(80,160,170,30);
-
-        add(btnReportPlaylist);
-
         btnEsci = new JButton("Esci");
 
-        btnEsci.setBounds(110,210,110,30);
+        pannelloProfilo.add(lblNome);
+        pannelloProfilo.add(txtNome);
+        pannelloProfilo.add(lblCognome);
+        pannelloProfilo.add(txtCognome);
+        pannelloProfilo.add(lblEmail);
+        pannelloProfilo.add(txtEmail);
+        pannelloProfilo.add(new JLabel(""));
+        pannelloProfilo.add(btnReportPlaylist);
+        pannelloProfilo.add(new JLabel(""));
+        pannelloProfilo.add(btnEsci);
+        
+        add(pannelloProfilo, new GridBagConstraints());
 
-        add(btnEsci);
+        addComponentListener(new ComponentAdapter() {
+
+            @Override
+
+            public void componentResized(ComponentEvent e) {
+
+                aggiornaDimensioni();
+
+            }
+
+        });
 
         btnReportPlaylist.addActionListener(e ->
 
@@ -98,14 +85,44 @@ public class ProfiloPage extends JFrame {
 
         btnEsci.addActionListener(e -> dispose());
 
+        aggiornaDimensioni();
+
+    }
+
+    private void aggiornaDimensioni() {
+
+        int larghezzaFinestra = getContentPane().getWidth();
+        int altezzaFinestra = getContentPane().getHeight();
+        int larghezzaPannello = (int) (larghezzaFinestra * 0.60);
+        int altezzaPannello = (int) (altezzaFinestra * 0.65);
+
+        larghezzaPannello = Math.max(320, Math.min(larghezzaPannello, 650));
+        altezzaPannello = Math.max(240, Math.min(altezzaPannello, 420));
+
+        pannelloProfilo.setPreferredSize(new Dimension(larghezzaPannello, altezzaPannello));
+
+        int dimensioneFont = Math.min(larghezzaFinestra / 40, altezzaFinestra / 24);
+        dimensioneFont = Math.max(13, Math.min(dimensioneFont, 22));
+        Font font = new Font("Arial", Font.PLAIN, dimensioneFont);
+
+        lblNome.setFont(font);
+        lblCognome.setFont(font);
+        lblEmail.setFont(font);
+        txtNome.setFont(font);
+        txtCognome.setFont(font);
+        txtEmail.setFont(font);
+        btnReportPlaylist.setFont(font);
+        btnEsci.setFont(font);
+
+        pannelloProfilo.revalidate();
+        pannelloProfilo.repaint();
+
     }
 
     public void mostraProfilo(String nome, String cognome, String email) {
 
         txtNome.setText(nome);
-
         txtCognome.setText(cognome);
-
         txtEmail.setText(email);
 
     }
