@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import javax.swing.JButton;
@@ -14,6 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import control.Controller;
 import entity.Playlist;
+import java.awt.Toolkit;
 
 public class VisualizzaPlaylistPage extends JFrame {
 
@@ -31,7 +33,8 @@ public class VisualizzaPlaylistPage extends JFrame {
     private JPanel pannelloPulsanti;
     private JPanel pannelloCompleto;
 
-    public VisualizzaPlaylistPage(Controller controller, Playlist playlist, int numeroElementi) {
+    public VisualizzaPlaylistPage(Controller controller, Playlist playlist,int numeroElementi) {
+    	setIconImage(Toolkit.getDefaultToolkit().getImage(VisualizzaPlaylistPage.class.getResource("/images/UNINAFY.png")));
 
         this.controller = controller;
         this.playlist = playlist;
@@ -41,20 +44,19 @@ public class VisualizzaPlaylistPage extends JFrame {
         setSize(520, 500);
         setMinimumSize(new Dimension(400, 420));
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
         setLocationRelativeTo(null);
         setResizable(true);
-
-        setLayout(new GridBagLayout());
+        getContentPane().setLayout(new GridBagLayout());
 
         pannelloInformazioni = new JPanel(new GridLayout(2, 1, 0, 10));
 
         lblTitoloPlaylist = new JLabel("Playlist: " + playlist.getNomePlaylist(), JLabel.CENTER);
         lblNumeroElementi = new JLabel("Numero elementi: " + numeroElementi, JLabel.CENTER);
-        
+
         pannelloInformazioni.add(lblTitoloPlaylist);
-        pannelloInformazioni.add(lblNumeroElementi);   
-        pannelloPulsanti = new JPanel(new GridLayout(5, 1, 0,12));
+        pannelloInformazioni.add(lblNumeroElementi);
+
+        pannelloPulsanti = new JPanel(new GridLayout(5, 1, 0, 12));
 
         btnVisualizzaElemento = new JButton("Visualizza Elemento");
         btnRimuoviElemento = new JButton("Rimuovi Elemento");
@@ -67,46 +69,59 @@ public class VisualizzaPlaylistPage extends JFrame {
         pannelloPulsanti.add(btnCondividiPlaylist);
         pannelloPulsanti.add(btnEliminaPlaylist);
         pannelloPulsanti.add(btnIndietro);
+
         pannelloCompleto = new JPanel(new GridBagLayout());
 
-        GridBagConstraints gbc =new GridBagConstraints();
+        GridBagConstraints gbcInformazioni = new GridBagConstraints();
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.weighty = 0.0;
+        gbcInformazioni.gridx = 0;
+        gbcInformazioni.gridy = 0;
+        gbcInformazioni.weightx = 1.0;
+        gbcInformazioni.weighty = 0.0;
+        gbcInformazioni.fill = GridBagConstraints.HORIZONTAL;
 
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        pannelloCompleto.add(pannelloInformazioni, gbcInformazioni);
 
-        pannelloCompleto.add(pannelloInformazioni, gbc);
+        GridBagConstraints gbcPulsanti = new GridBagConstraints();
 
-        gbc.gridy = 1;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.insets = new java.awt.Insets(25, 0, 0, 0);
+        gbcPulsanti.gridx = 0;
+        gbcPulsanti.gridy = 1;
+        gbcPulsanti.weightx = 1.0;
+        gbcPulsanti.weighty = 1.0;
+        gbcPulsanti.fill = GridBagConstraints.BOTH;
 
-        pannelloCompleto.add(pannelloPulsanti,gbc);
+        gbcPulsanti.insets = new Insets(25, 0, 0, 0);
 
-        add(pannelloCompleto, new GridBagConstraints());
+        pannelloCompleto.add(pannelloPulsanti, gbcPulsanti);
+
+        GridBagConstraints gbcCompleto = new GridBagConstraints();
+
+        gbcCompleto.gridx = 0;
+        gbcCompleto.gridy = 0;
+
+        getContentPane().add(pannelloCompleto, gbcCompleto);
 
         addComponentListener(new ComponentAdapter() {
 
-                    @Override
-                    public void componentResized(ComponentEvent e) {
+            @Override
+            public void componentResized(ComponentEvent e) {
 
-                        aggiornaDimensioni();
-                    }
-                }
-        );
+                aggiornaDimensioni();
+            }
+        });
 
         btnVisualizzaElemento.addActionListener(
-                e -> controller.mostraVisualizzaElementoDaPlaylist(playlist.getIdPlaylist()));
+                e -> controller.mostraVisualizzaElementoDaPlaylist(
+                        playlist.getIdPlaylist()
+                )
+        );
 
         btnRimuoviElemento.addActionListener(e -> {
 
-            String idElemento = JOptionPane.showInputDialog(this,"Inserisci ID elemento da rimuovere:");
+            String idElemento = JOptionPane.showInputDialog(this, "Inserisci ID elemento da rimuovere:");
 
             if (idElemento == null) {
+
                 return;
             }
 
@@ -140,6 +155,7 @@ public class VisualizzaPlaylistPage extends JFrame {
             String email = JOptionPane.showInputDialog(this, "Condividi Playlist", JOptionPane.QUESTION_MESSAGE);
 
             if (email == null) {
+
                 return;
             }
 
@@ -152,7 +168,7 @@ public class VisualizzaPlaylistPage extends JFrame {
                 return;
             }
 
-            boolean ok = controller.condividiPlaylist(playlist.getIdPlaylist(), email);
+            boolean ok = controller.condividiPlaylist(playlist.getIdPlaylist(),email);
 
             if (ok) {
 
@@ -166,8 +182,8 @@ public class VisualizzaPlaylistPage extends JFrame {
 
         btnEliminaPlaylist.addActionListener(e -> {
 
-            int scelta = JOptionPane.showConfirmDialog(this, "Sei sicuro di voler eliminare la playlist?", "Conferma eliminazione",
-                    		JOptionPane.YES_NO_OPTION);
+            int scelta = JOptionPane.showConfirmDialog(this, "Sei sicuro di voler eliminare la playlist?",
+                    "Conferma eliminazione", JOptionPane.YES_NO_OPTION);
 
             if (scelta != JOptionPane.YES_OPTION) {
 
@@ -185,7 +201,8 @@ public class VisualizzaPlaylistPage extends JFrame {
 
             } else {
 
-                JOptionPane.showMessageDialog(this, "Errore nell'eliminazione della playlist", "Errore", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Errore nell'eliminazione della playlist",
+                        "Errore", JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -206,19 +223,21 @@ public class VisualizzaPlaylistPage extends JFrame {
         int altezzaPannello = (int) (altezzaFinestra * 0.72);
 
         larghezzaPannello = Math.max(300, Math.min(larghezzaPannello, 620));
-        altezzaPannello = Math.max(330, Math.min(altezzaPannello, 560));
+
+        altezzaPannello = Math.max(330,Math.min(altezzaPannello, 560));
 
         pannelloCompleto.setPreferredSize(new Dimension(larghezzaPannello, altezzaPannello));
 
-        int dimensioneFont = Math.min(larghezzaFinestra / 40, altezzaFinestra / 28);
+        int dimensioneFont = Math.min(larghezzaFinestra / 40,altezzaFinestra / 28);
         dimensioneFont = Math.max(13, Math.min(dimensioneFont, 22));
 
         Font fontNormale = new Font("Arial", Font.PLAIN, dimensioneFont);
+
         Font fontTitolo = new Font("Arial", Font.BOLD, dimensioneFont + 1);
 
         lblTitoloPlaylist.setFont(fontTitolo);
         lblNumeroElementi.setFont(fontNormale);
-        
+
         btnVisualizzaElemento.setFont(fontNormale);
         btnRimuoviElemento.setFont(fontNormale);
         btnCondividiPlaylist.setFont(fontNormale);
@@ -227,8 +246,10 @@ public class VisualizzaPlaylistPage extends JFrame {
 
         pannelloInformazioni.revalidate();
         pannelloInformazioni.repaint();
+
         pannelloPulsanti.revalidate();
         pannelloPulsanti.repaint();
+
         pannelloCompleto.revalidate();
         pannelloCompleto.repaint();
     }

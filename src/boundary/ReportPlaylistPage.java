@@ -16,6 +16,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import control.Controller;
+import java.awt.Toolkit;
 
 public class ReportPlaylistPage extends JFrame {
 
@@ -28,6 +29,7 @@ public class ReportPlaylistPage extends JFrame {
     private DefaultCategoryDataset dataset;
 
     public ReportPlaylistPage(Controller controller, int numeroPlaylist, int numeroCaricamenti) {
+    	setIconImage(Toolkit.getDefaultToolkit().getImage(ReportPlaylistPage.class.getResource("/images/UNINAFY.png")));
 
         this.controller = controller;
         this.numeroPlaylist = numeroPlaylist;
@@ -37,7 +39,7 @@ public class ReportPlaylistPage extends JFrame {
         setSize(650, 500);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
+        getContentPane().setLayout(new BorderLayout());
 
         JPanel pannelloDati = new JPanel(new GridLayout(1, 2, 20, 0));
         lblNumeroPlaylist = new JLabel("Numero playlist: " + numeroPlaylist, JLabel.CENTER);
@@ -48,7 +50,7 @@ public class ReportPlaylistPage extends JFrame {
         pannelloDati.add(lblNumeroPlaylist);
         pannelloDati.add(lblNumeroCaricamenti);
 
-        add(pannelloDati, BorderLayout.NORTH);
+        getContentPane().add(pannelloDati, BorderLayout.NORTH);
 
         dataset = new DefaultCategoryDataset();     
         dataset.addValue(numeroPlaylist,"Quantità", "Playlist");
@@ -58,14 +60,14 @@ public class ReportPlaylistPage extends JFrame {
                              dataset, PlotOrientation.VERTICAL, false, true, false);
 
         ChartPanel pannelloGrafico = new ChartPanel(grafico);
-        add(pannelloGrafico, BorderLayout.CENTER);
+        getContentPane().add(pannelloGrafico, BorderLayout.CENTER);
 
         JPanel pannelloPulsanti = new JPanel();
 
         btnIndietro = new JButton("Indietro");
         pannelloPulsanti.add(btnIndietro);
 
-        add(pannelloPulsanti, BorderLayout.SOUTH);
+        getContentPane().add(pannelloPulsanti, BorderLayout.SOUTH);
 
         btnIndietro.addActionListener(e ->
                 controller.tornaAlProfiloDalReport()

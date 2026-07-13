@@ -16,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import control.Controller;
+import java.awt.Toolkit;
 
 public class ProfiloPage extends JFrame {
 
@@ -31,6 +32,7 @@ public class ProfiloPage extends JFrame {
     private JPanel pannelloProfilo;
 
     public ProfiloPage(Controller controller) {
+    	setIconImage(Toolkit.getDefaultToolkit().getImage(ProfiloPage.class.getResource("/images/UNINAFY.png")));
 
         this.controller = controller;
 
@@ -40,7 +42,7 @@ public class ProfiloPage extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(true);
-        setLayout(new GridBagLayout());
+        getContentPane().setLayout(new GridBagLayout());
 
         pannelloProfilo = new JPanel(new GridLayout(5, 2, 12, 15));
 
@@ -68,7 +70,7 @@ public class ProfiloPage extends JFrame {
         pannelloProfilo.add(new JLabel(""));
         pannelloProfilo.add(btnIndietro);
 
-        add(pannelloProfilo, new GridBagConstraints());
+        getContentPane().add(pannelloProfilo, new GridBagConstraints());
 
         addComponentListener(new ComponentAdapter() {
 

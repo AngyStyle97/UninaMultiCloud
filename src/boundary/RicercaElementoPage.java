@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
@@ -17,8 +18,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+
 import control.Controller;
 import entity.ElementoMultimediale;
+import java.awt.Toolkit;
 
 public class RicercaElementoPage extends JFrame {
 
@@ -37,23 +40,26 @@ public class RicercaElementoPage extends JFrame {
     private JPanel pannelloPulsantiFinali;
 
     public RicercaElementoPage(Controller controller) {
+    	setIconImage(Toolkit.getDefaultToolkit().getImage(RicercaElementoPage.class.getResource("/images/UNINAFY.png")));
 
         this.controller = controller;
+
         setTitle("Ricerca Elemento");
         setSize(600, 500);
         setMinimumSize(new Dimension(430, 380));
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(true);
-        setLayout(new GridBagLayout());
+        getContentPane().setLayout(new GridBagLayout());
 
         pannelloTitolo = new JPanel(new GridLayout(1, 2, 12, 0));
 
         lblTitolo = new JLabel("Titolo elemento");
         txtTitolo = new JTextField();
+
         pannelloTitolo.add(lblTitolo);
         pannelloTitolo.add(txtTitolo);
-        
+
         pannelloPulsantiRicerca = new JPanel(new GridLayout(1, 2, 15, 0));
 
         btnCerca = new JButton("Cerca");
@@ -71,50 +77,67 @@ public class RicercaElementoPage extends JFrame {
         btnVisualizza = new JButton("Visualizza");
         pannelloPulsantiFinali.add(btnVisualizza);
 
- 
-
         pannelloRicerca = new JPanel(new GridBagLayout());
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new java.awt.Insets(0, 0, 15, 0);
+        GridBagConstraints gbcTitolo = new GridBagConstraints();
 
-        pannelloRicerca.add(pannelloTitolo, gbc);
+        gbcTitolo.gridx = 0;
+        gbcTitolo.gridy = 0;
+        gbcTitolo.weightx = 1.0;
+        gbcTitolo.fill = GridBagConstraints.HORIZONTAL;
+        gbcTitolo.insets = new Insets(0, 0, 15, 0);
 
-        gbc.gridy = 1;
-        gbc.insets = new java.awt.Insets(0, 0, 15, 0);
+        pannelloRicerca.add(pannelloTitolo, gbcTitolo);
 
-        pannelloRicerca.add(pannelloPulsantiRicerca, gbc);
+        GridBagConstraints gbcPulsantiRicerca = new GridBagConstraints();
 
-        gbc.gridy = 2;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.insets = new java.awt.Insets(0, 0, 15, 0);
+        gbcPulsantiRicerca.gridx = 0;
+        gbcPulsantiRicerca.gridy = 1;
+        gbcPulsantiRicerca.weightx = 1.0;
+        gbcPulsantiRicerca.fill = GridBagConstraints.HORIZONTAL;
+        gbcPulsantiRicerca.insets = new Insets(0, 0, 15, 0);
 
-        pannelloRicerca.add(scrollRisultati, gbc);
+        pannelloRicerca.add(
+                pannelloPulsantiRicerca,
+                gbcPulsantiRicerca
+        );
 
-        gbc.gridy = 3;
-        gbc.weighty = 0.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new java.awt.Insets(0, 0, 0, 0);
+        GridBagConstraints gbcRisultati = new GridBagConstraints();
 
-        pannelloRicerca.add(pannelloPulsantiFinali, gbc);
+        gbcRisultati.gridx = 0;
+        gbcRisultati.gridy = 2;
+        gbcRisultati.weightx = 1.0;
+        gbcRisultati.weighty = 1.0;
+        gbcRisultati.fill = GridBagConstraints.BOTH;
+        gbcRisultati.insets = new Insets(0, 0, 15, 0);
 
-        add(pannelloRicerca, new GridBagConstraints());
+        pannelloRicerca.add(scrollRisultati, gbcRisultati);
+
+        GridBagConstraints gbcPulsantiFinali = new GridBagConstraints();
+
+        gbcPulsantiFinali.gridx = 0;
+        gbcPulsantiFinali.gridy = 3;
+        gbcPulsantiFinali.weightx = 1.0;
+        gbcPulsantiFinali.weighty = 0.0;
+        gbcPulsantiFinali.fill = GridBagConstraints.HORIZONTAL;
+        gbcPulsantiFinali.insets = new Insets(0, 0, 0, 0);
+
+        pannelloRicerca.add(pannelloPulsantiFinali, gbcPulsantiFinali);
+
+        GridBagConstraints gbcRicerca = new GridBagConstraints();
+
+        gbcRicerca.gridx = 0;
+        gbcRicerca.gridy = 0;
+
+        getContentPane().add(pannelloRicerca, gbcRicerca);
 
         addComponentListener(new ComponentAdapter() {
 
             @Override
-
             public void componentResized(ComponentEvent e) {
 
                 aggiornaDimensioni();
-
             }
-
         });
 
         btnCerca.addActionListener(e -> cercaElementi());
@@ -128,53 +151,59 @@ public class RicercaElementoPage extends JFrame {
                 JOptionPane.showMessageDialog(this, "Seleziona un elemento da visualizzare", "Attenzione", JOptionPane.WARNING_MESSAGE);
 
                 return;
-
             }
 
             controller.mostraRiproduzioneElemento(elementoSelezionato);
-            });
+        });
 
         btnAnnulla.addActionListener(e -> {
-        	
-         dispose();
-         controller.mostraProfilo();
+
+            dispose();
+            controller.mostraProfilo();
         });
 
         aggiornaDimensioni();
-
     }
 
     private void aggiornaDimensioni() {
 
         int larghezzaFinestra = getContentPane().getWidth();
         int altezzaFinestra = getContentPane().getHeight();
+
         int larghezzaPannello = (int) (larghezzaFinestra * 0.72);
         int altezzaPannello = (int) (altezzaFinestra * 0.75);
-        
-        larghezzaPannello = Math.max(340,Math.min(larghezzaPannello, 760));
+
+        larghezzaPannello = Math.max(340, Math.min(larghezzaPannello, 760));
         altezzaPannello = Math.max(280, Math.min(altezzaPannello, 620));
 
         pannelloRicerca.setPreferredSize(new Dimension(larghezzaPannello, altezzaPannello));
 
         int dimensioneFont = Math.min(larghezzaFinestra / 42, altezzaFinestra / 28);
+
         dimensioneFont = Math.max(13, Math.min(dimensioneFont, 22));
+
         Font font = new Font("Arial", Font.PLAIN, dimensioneFont);
 
         lblTitolo.setFont(font);
         txtTitolo.setFont(font);
+
         btnCerca.setFont(font);
         btnVisualizza.setFont(font);
         btnAnnulla.setFont(font);
+
         listaRisultati.setFont(font);
+
         pannelloTitolo.revalidate();
         pannelloTitolo.repaint();
+
         pannelloPulsantiRicerca.revalidate();
         pannelloPulsantiRicerca.repaint();
+
         pannelloPulsantiFinali.revalidate();
         pannelloPulsantiFinali.repaint();
+
         pannelloRicerca.revalidate();
         pannelloRicerca.repaint();
-
     }
 
     private void cercaElementi() {
@@ -186,37 +215,31 @@ public class RicercaElementoPage extends JFrame {
             JOptionPane.showMessageDialog(this, "Inserisci il titolo dell'elemento", "Attenzione", JOptionPane.WARNING_MESSAGE);
 
             return;
-
         }
 
         ArrayList<ElementoMultimediale> risultati = controller.cercaElemento(titolo);
         mostraRisultati(risultati);
-
     }
 
-    public void mostraRisultati(
+    public void mostraRisultati(ArrayList<ElementoMultimediale> risultati) {
 
-            ArrayList<ElementoMultimediale> risultati) {modelloLista.clear();
+        modelloLista.clear();
 
         if (risultati == null || risultati.isEmpty()) {
 
             JOptionPane.showMessageDialog(this, "Nessun elemento trovato", "Ricerca elemento", JOptionPane.INFORMATION_MESSAGE);
 
             return;
-
         }
 
         for (ElementoMultimediale elemento : risultati) {
 
             modelloLista.addElement(elemento);
-
         }
-
     }
 
     public void mostraMessaggio(String messaggio) {
 
         JOptionPane.showMessageDialog(this, messaggio);
-
     }
 }

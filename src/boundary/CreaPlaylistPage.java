@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import javax.swing.JButton;
@@ -15,6 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import control.Controller;
+import java.awt.Toolkit;
 
 public class CreaPlaylistPage extends JFrame {
 
@@ -32,15 +34,17 @@ public class CreaPlaylistPage extends JFrame {
     private JPanel pannelloCompleto;
 
     public CreaPlaylistPage(Controller controller) {
+    	setIconImage(Toolkit.getDefaultToolkit().getImage(CreaPlaylistPage.class.getResource("/images/UNINAFY.png")));
 
         this.controller = controller;
+
         setTitle("Crea Playlist");
         setSize(520, 400);
         setMinimumSize(new Dimension(420, 330));
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(true);
-        setLayout(new GridBagLayout());
+        getContentPane().setLayout(new GridBagLayout());
 
         pannelloCampi = new JPanel(new GridLayout(3, 2, 12, 18));
 
@@ -49,6 +53,7 @@ public class CreaPlaylistPage extends JFrame {
         lblNomePlaylist = new JLabel("Nome playlist");
         txtNomePlaylist = new JTextField();
         lblTipoPlaylist = new JLabel("Tipo playlist");
+        
         cmbTipoPlaylist = new JComboBox<>();
         cmbTipoPlaylist.addItem("Privata");
         cmbTipoPlaylist.addItem("Pubblica");
@@ -69,32 +74,39 @@ public class CreaPlaylistPage extends JFrame {
         pannelloPulsanti.add(btnAnnulla);
         pannelloCompleto = new JPanel(new GridBagLayout());
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
+        GridBagConstraints gbcCampi = new GridBagConstraints();
 
-        pannelloCompleto.add(pannelloCampi, gbc);
+        gbcCampi.gridx = 0;
+        gbcCampi.gridy = 0;
+        gbcCampi.weightx = 1.0;
+        gbcCampi.weighty = 1.0;
+        gbcCampi.fill = GridBagConstraints.BOTH;
 
-        gbc.gridy = 1;
-        gbc.weighty = 0.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new java.awt.Insets(25, 0, 0, 0);
+        pannelloCompleto.add(pannelloCampi, gbcCampi);
 
-        pannelloCompleto.add(pannelloPulsanti, gbc);
+        GridBagConstraints gbcPulsanti = new GridBagConstraints();
 
-        add(pannelloCompleto, new GridBagConstraints());
+        gbcPulsanti.gridx = 0;
+        gbcPulsanti.gridy = 1;
+        gbcPulsanti.weightx = 1.0;
+        gbcPulsanti.weighty = 0.0;
+        gbcPulsanti.fill = GridBagConstraints.HORIZONTAL;
+        gbcPulsanti.insets = new Insets(25, 0, 0, 0);
+
+        pannelloCompleto.add(pannelloPulsanti, gbcPulsanti);
+
+        GridBagConstraints gbcCompleto = new GridBagConstraints();
+        gbcCompleto.gridx = 0;
+        gbcCompleto.gridy = 0;
+
+        getContentPane().add(pannelloCompleto, gbcCompleto);
 
         addComponentListener(new ComponentAdapter() {
 
             @Override
-
             public void componentResized(ComponentEvent e) {
 
                 aggiornaDimensioni();
-
             }
         });
 
@@ -104,22 +116,20 @@ public class CreaPlaylistPage extends JFrame {
 
             dispose();
             controller.mostraMenu();
-
         });
 
         aggiornaDimensioni();
-
     }
 
     private void aggiornaDimensioni() {
 
         int larghezzaFinestra = getContentPane().getWidth();
         int altezzaFinestra = getContentPane().getHeight();
+
         int larghezzaPannello = (int) (larghezzaFinestra * 0.65);
         int altezzaPannello = (int) (altezzaFinestra * 0.55);
 
         larghezzaPannello = Math.max(330, Math.min(larghezzaPannello, 650));
-
         altezzaPannello = Math.max(220, Math.min(altezzaPannello, 380));
 
         pannelloCompleto.setPreferredSize(new Dimension(larghezzaPannello, altezzaPannello));
@@ -133,20 +143,23 @@ public class CreaPlaylistPage extends JFrame {
         lblIdPlaylist.setFont(font);
         lblNomePlaylist.setFont(font);
         lblTipoPlaylist.setFont(font);
+
         txtIdPlaylist.setFont(font);
         txtNomePlaylist.setFont(font);
+
         cmbTipoPlaylist.setFont(font);
-        
+
         btnCrea.setFont(font);
         btnAnnulla.setFont(font);
 
         pannelloCampi.revalidate();
         pannelloCampi.repaint();
+
         pannelloPulsanti.revalidate();
         pannelloPulsanti.repaint();
+
         pannelloCompleto.revalidate();
         pannelloCompleto.repaint();
-
     }
 
     private void creaPlaylist() {
@@ -155,18 +168,11 @@ public class CreaPlaylistPage extends JFrame {
         String nomePlaylist = txtNomePlaylist.getText().trim();
         String tipoPlaylist = (String) cmbTipoPlaylist.getSelectedItem();
 
-        if (idPlaylist.isEmpty()
+        if (idPlaylist.isEmpty() || nomePlaylist.isEmpty()|| tipoPlaylist == null) {
 
-                || nomePlaylist.isEmpty()
-
-                || tipoPlaylist == null) {
-
-            JOptionPane.showMessageDialog(
-
-                    this, "Compila tutti i campi", "Attenzione", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Compila tutti i campi", "Attenzione", JOptionPane.WARNING_MESSAGE);
 
             return;
-
         }
 
         boolean ok = controller.creaPlaylist(idPlaylist, nomePlaylist, tipoPlaylist);
@@ -181,7 +187,6 @@ public class CreaPlaylistPage extends JFrame {
         } else {
 
             JOptionPane.showMessageDialog(this, "Impossibile creare la playlist", "Errore", JOptionPane.ERROR_MESSAGE);
-
         }
     }
 }

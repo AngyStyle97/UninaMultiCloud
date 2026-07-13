@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import control.Controller;
+import java.awt.Toolkit;
 
 public class LoginPage extends JFrame {
 
@@ -28,6 +29,7 @@ public class LoginPage extends JFrame {
     private JPanel pannelloLogin;
 
     public LoginPage(Controller controller) {
+    	setIconImage(Toolkit.getDefaultToolkit().getImage(LoginPage.class.getResource("/images/UNINAFY.png")));
 
         this.controller = controller;
 
@@ -37,7 +39,7 @@ public class LoginPage extends JFrame {
         setMinimumSize(new Dimension(420, 280));
         setLocationRelativeTo(null);
         setResizable(true);
-        setLayout(new GridBagLayout());
+        getContentPane().setLayout(new GridBagLayout());
 
         pannelloLogin = new JPanel(new GridLayout(4, 2, 10, 15));
 
@@ -59,7 +61,7 @@ public class LoginPage extends JFrame {
         pannelloLogin.add(btnAccedi);
         pannelloLogin.add(btnCancella);
 
-        add(pannelloLogin, new GridBagConstraints());
+        getContentPane().add(pannelloLogin, new GridBagConstraints());
 
         addComponentListener(new ComponentAdapter() {
 

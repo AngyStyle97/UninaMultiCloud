@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import control.Controller;
 import entity.Playlist;
+import java.awt.Toolkit;
 
 public class RicercaPlaylistPage extends JFrame {
 
@@ -32,6 +34,7 @@ public class RicercaPlaylistPage extends JFrame {
     private JPanel pannelloCompleto;
 
     public RicercaPlaylistPage(Controller controller) {
+    	setIconImage(Toolkit.getDefaultToolkit().getImage(RicercaPlaylistPage.class.getResource("/images/UNINAFY.png")));
 
         this.controller = controller;
 
@@ -41,7 +44,7 @@ public class RicercaPlaylistPage extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setResizable(true);
-        setLayout(new GridBagLayout());
+        getContentPane().setLayout(new GridBagLayout());
 
         pannelloCampi = new JPanel(new GridLayout(2, 2, 12, 18));
 
@@ -57,6 +60,7 @@ public class RicercaPlaylistPage extends JFrame {
 
         pannelloCampi.add(lblNome);
         pannelloCampi.add(txtNomePlaylist);
+
         pannelloCampi.add(lblTipo);
         pannelloCampi.add(cmbTipoPlaylist);
 
@@ -64,46 +68,47 @@ public class RicercaPlaylistPage extends JFrame {
         btnAnnulla = new JButton("Annulla");
 
         pannelloPulsanti = new JPanel(new GridLayout(1, 2, 15, 0));
-
         pannelloPulsanti.add(btnCerca);
         pannelloPulsanti.add(btnAnnulla);
 
         pannelloCompleto = new JPanel(new GridBagLayout());
+        GridBagConstraints gbcCampi = new GridBagConstraints();
+        gbcCampi.gridx = 0;
+        gbcCampi.gridy = 0;
+        gbcCampi.weightx = 1.0;
+        gbcCampi.weighty = 1.0;
+        gbcCampi.fill = GridBagConstraints.BOTH;
 
-        GridBagConstraints gbc = new GridBagConstraints();
+        pannelloCompleto.add(pannelloCampi, gbcCampi);
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
+        GridBagConstraints gbcPulsanti = new GridBagConstraints();
 
-        pannelloCompleto.add(pannelloCampi, gbc);
+        gbcPulsanti.gridx = 0;
+        gbcPulsanti.gridy = 1;
+        gbcPulsanti.weightx = 1.0;
+        gbcPulsanti.weighty = 0.0;
+        gbcPulsanti.fill = GridBagConstraints.HORIZONTAL;
+        gbcPulsanti.insets = new Insets(25, 0, 0, 0);
 
-        gbc.gridy = 1;
-        gbc.weighty = 0.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new java.awt.Insets(25, 0, 0, 0);
+        pannelloCompleto.add(pannelloPulsanti, gbcPulsanti);
 
-        pannelloCompleto.add(pannelloPulsanti, gbc);
+        GridBagConstraints gbcCompleto = new GridBagConstraints();
 
-        add(pannelloCompleto, new GridBagConstraints());
+        gbcCompleto.gridx = 0;
+        gbcCompleto.gridy = 0;
 
-        addComponentListener(
-                new ComponentAdapter() {
+        getContentPane().add(pannelloCompleto, gbcCompleto);
 
-                    @Override
-                    public void componentResized(
-                            ComponentEvent e) {
+        addComponentListener(new ComponentAdapter() {
 
-                        aggiornaDimensioni();
-                    }
-                }
-        );
+            @Override
+            public void componentResized(ComponentEvent e) {
 
-        btnCerca.addActionListener(
-                e -> cercaPlaylist()
-        );
+                aggiornaDimensioni();
+            }
+        });
+
+        btnCerca.addActionListener(e -> cercaPlaylist());
 
         btnAnnulla.addActionListener(e -> {
 
@@ -120,12 +125,14 @@ public class RicercaPlaylistPage extends JFrame {
         int altezzaFinestra = getContentPane().getHeight();
 
         int larghezzaPannello = (int) (larghezzaFinestra * 0.65);
+
         int altezzaPannello = (int) (altezzaFinestra * 0.48);
 
         larghezzaPannello = Math.max(330, Math.min(larghezzaPannello, 650));
         altezzaPannello = Math.max(190, Math.min(altezzaPannello, 330));
 
         pannelloCompleto.setPreferredSize(new Dimension(larghezzaPannello, altezzaPannello));
+
         int dimensioneFont = Math.min(larghezzaFinestra / 40, altezzaFinestra / 22);
         dimensioneFont = Math.max(13, Math.min(dimensioneFont, 22));
 
@@ -142,8 +149,10 @@ public class RicercaPlaylistPage extends JFrame {
 
         pannelloCampi.revalidate();
         pannelloCampi.repaint();
+
         pannelloPulsanti.revalidate();
         pannelloPulsanti.repaint();
+
         pannelloCompleto.revalidate();
         pannelloCompleto.repaint();
     }
@@ -170,13 +179,14 @@ public class RicercaPlaylistPage extends JFrame {
 
             int numeroElementi = controller.contaElementiPlaylist(playlist.getIdPlaylist());
 
-            opzioni[i] = "Playlist " + playlist.getTipoPlaylist() + " - ID: " + playlist.getIdPlaylist() + " - Nome: "
-                            + playlist.getNomePlaylist() + " - Numero elementi: " + numeroElementi;}
+            opzioni[i] = "Playlist " + playlist.getTipoPlaylist() + " - ID: " + playlist.getIdPlaylist()
+                    + " - Nome: " + playlist.getNomePlaylist() + " - Numero elementi: " + numeroElementi;}
 
-        String opzioneSelezionata = (String) JOptionPane.showInputDialog(this, "Seleziona la playlist:",
-                                "Risultati ricerca", JOptionPane.QUESTION_MESSAGE, null, opzioni, opzioni[0]);
+        String opzioneSelezionata = (String) JOptionPane.showInputDialog(this, "Seleziona la playlist:", "Risultati ricerca",
+                        JOptionPane.QUESTION_MESSAGE, null, opzioni, opzioni[0]);
 
         if (opzioneSelezionata == null) {
+
             return;
         }
 
@@ -192,11 +202,11 @@ public class RicercaPlaylistPage extends JFrame {
         }
 
         if (indiceSelezionato == -1) {
+
             return;
         }
 
         Playlist playlistSelezionata = risultati.get(indiceSelezionato);
-
         controller.mostraVisualizzaPlaylist(playlistSelezionata);
 
         dispose();
