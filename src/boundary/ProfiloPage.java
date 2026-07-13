@@ -52,7 +52,7 @@ public class ProfiloPage extends JFrame {
         txtEmail.setEditable(false);
 
         btnReportPlaylist = new JButton("Report Playlist");
-        btnEsci = new JButton("Esci");
+        btnEsci = new JButton("Indietro");
 
         pannelloProfilo.add(lblNome);
         pannelloProfilo.add(txtNome);
@@ -83,7 +83,11 @@ public class ProfiloPage extends JFrame {
 
                 controller.mostraReportPlaylist());
 
-        btnEsci.addActionListener(e -> dispose());
+        btnEsci.addActionListener(e -> {
+        
+        dispose();
+        controller.mostraMenu();
+        });
 
         aggiornaDimensioni();
 
