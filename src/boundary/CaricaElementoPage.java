@@ -21,6 +21,7 @@ import entity.Audio;
 import entity.ElementoMultimediale;
 import entity.Video;
 import java.awt.Toolkit;
+import java.awt.Color;
 
 public class CaricaElementoPage extends JFrame {
 
@@ -52,40 +53,56 @@ public class CaricaElementoPage extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(true);
-        getContentPane().setLayout(new GridBagLayout());
+        
+        PannelloSfondo pannelloSfondo = new PannelloSfondo("/images/sfondo.jpg");
+        pannelloSfondo.setLayout(new GridBagLayout());
+        setContentPane(pannelloSfondo);
 
         pannelloCaricamento = new JPanel(new GridLayout(9, 2, 12, 12));
+        pannelloCaricamento.setOpaque(false);
 
         JLabel lblId = new JLabel("ID elemento");
         txtId = new JTextField();
-
+        lblId.setForeground(Color.WHITE);
+        
         JLabel lblTitolo = new JLabel("Titolo");
         txtTitolo = new JTextField();
-
+        lblTitolo.setForeground(Color.WHITE);
+        
         JLabel lblDescrizione = new JLabel("Descrizione");
         txtDescrizione = new JTextField();
-
+        lblDescrizione.setForeground(Color.WHITE);
+        
         JLabel lblCopertina = new JLabel("Immagine copertina");
         txtImmagineCopertina = new JTextField();
-
+        lblCopertina.setForeground(Color.WHITE);
+        
         JLabel lblTipo = new JLabel("Tipo elemento");
-
+        lblTipo.setForeground(Color.WHITE);
+        
         cmbTipo = new JComboBox<>();
         cmbTipo.addItem("Audio");
         cmbTipo.addItem("Video");
 
+        // ISCR && RISOLUZIONE
         lblCampo1 = new JLabel();
         txtCampo1 = new JTextField();
-
+        lblCampo1.setForeground(Color.WHITE);
+        
+        // DURATA AUDIO && FORMATO
         lblCampo2 = new JLabel();
         txtCampo2 = new JTextField();
-
+        lblCampo2.setForeground(Color.WHITE);
+        
+        // DURATA VIDEO
         lblCampo3 = new JLabel();
         txtCampo3 = new JTextField();
+        lblCampo3.setForeground(Color.WHITE);
 
         JLabel lblPeso = new JLabel("Peso");
         txtPeso = new JTextField();
-
+        lblPeso.setForeground(Color.WHITE);
+        
         btnCarica = new JButton("Carica");
         btnAnnulla = new JButton("Annulla");
 
@@ -117,11 +134,13 @@ public class CaricaElementoPage extends JFrame {
         pannelloCaricamento.add(txtPeso);
 
         JPanel pannelloPulsanti = new JPanel(new GridLayout(1, 2, 15, 0));
+        pannelloPulsanti.setOpaque(false);
 
         pannelloPulsanti.add(btnCarica);
         pannelloPulsanti.add(btnAnnulla);
 
         JPanel pannelloCompleto = new JPanel(new GridBagLayout());
+        pannelloCompleto.setOpaque(false);
 
         GridBagConstraints gbcCaricamento = new GridBagConstraints();
 
