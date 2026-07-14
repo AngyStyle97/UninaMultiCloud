@@ -1,13 +1,16 @@
 package boundary;
 
+import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.net.URL;
 import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -18,14 +21,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-
 import control.Controller;
 import entity.ElementoMultimediale;
-import java.awt.Toolkit;
 
 public class RicercaElementoPage extends JFrame {
 
     private Controller controller;
+    private CardLayout cardLayout;
+    private JPanel pannelloPrincipale;
     private JLabel lblTitolo;
     private JTextField txtTitolo;
     private JButton btnCerca;
@@ -38,11 +41,24 @@ public class RicercaElementoPage extends JFrame {
     private JPanel pannelloTitolo;
     private JPanel pannelloPulsantiRicerca;
     private JPanel pannelloPulsantiFinali;
+    private JPanel pannelloRiproduzione;
+    private JPanel pannelloRiproduzioneCompleto;
+    private JPanel pannelloPulsantiRiproduzione;
+    private JLabel lblInRiproduzione;
+    private JLabel lblTitoloRiproduzione;
+    private JButton btnAggiungiPlaylist;
+    private JButton btnIndietro;
+    private ElementoMultimediale elementoRiprodotto;
 
     public RicercaElementoPage(Controller controller) {
-    	setIconImage(Toolkit.getDefaultToolkit().getImage(RicercaElementoPage.class.getResource("/images/UNINAFY.png")));
 
         this.controller = controller;
+
+        URL icona = RicercaElementoPage.class.getResource("/images/UNINAFY.png");
+
+        if (icona != null) {
+            setIconImage(Toolkit.getDefaultToolkit().getImage(icona));
+        }
 
         setTitle("Ricerca Elemento");
         setSize(600, 500);
@@ -50,10 +66,37 @@ public class RicercaElementoPage extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(true);
-        getContentPane().setLayout(new GridBagLayout());
 
+        cardLayout = new CardLayout();
+        pannelloPrincipale = new JPanel(cardLayout);
+
+        creaPannelloRicerca();
+        creaPannelloRiproduzione();
+
+        pannelloPrincipale.add(pannelloRicerca, "RICERCA");
+
+        pannelloPrincipale.add(pannelloRiproduzione, "RIPRODUZIONE");
+
+        setContentPane(pannelloPrincipale);
+        
+        addComponentListener(new ComponentAdapter() {
+
+            @Override
+            public void componentResized(ComponentEvent e) {
+
+                aggiornaDimensioni();
+            }
+        });
+
+        aggiornaDimensioni();
+        mostraSchermataRicerca();
+    }
+
+    private void creaPannelloRicerca() {
+
+        pannelloRicerca = new JPanel(new GridBagLayout());
         pannelloTitolo = new JPanel(new GridLayout(1, 2, 12, 0));
-
+        
         lblTitolo = new JLabel("Titolo elemento");
         txtTitolo = new JTextField();
 
@@ -63,6 +106,7 @@ public class RicercaElementoPage extends JFrame {
         pannelloPulsantiRicerca = new JPanel(new GridLayout(1, 2, 15, 0));
 
         btnCerca = new JButton("Cerca");
+
         btnAnnulla = new JButton("Annulla");
 
         pannelloPulsantiRicerca.add(btnCerca);
@@ -76,8 +120,6 @@ public class RicercaElementoPage extends JFrame {
 
         btnVisualizza = new JButton("Visualizza");
         pannelloPulsantiFinali.add(btnVisualizza);
-
-        pannelloRicerca = new JPanel(new GridBagLayout());
 
         GridBagConstraints gbcTitolo = new GridBagConstraints();
 
@@ -97,10 +139,7 @@ public class RicercaElementoPage extends JFrame {
         gbcPulsantiRicerca.fill = GridBagConstraints.HORIZONTAL;
         gbcPulsantiRicerca.insets = new Insets(0, 0, 15, 0);
 
-        pannelloRicerca.add(
-                pannelloPulsantiRicerca,
-                gbcPulsantiRicerca
-        );
+        pannelloRicerca.add(pannelloPulsantiRicerca, gbcPulsantiRicerca);
 
         GridBagConstraints gbcRisultati = new GridBagConstraints();
 
@@ -120,27 +159,12 @@ public class RicercaElementoPage extends JFrame {
         gbcPulsantiFinali.weightx = 1.0;
         gbcPulsantiFinali.weighty = 0.0;
         gbcPulsantiFinali.fill = GridBagConstraints.HORIZONTAL;
-        gbcPulsantiFinali.insets = new Insets(0, 0, 0, 0);
 
         pannelloRicerca.add(pannelloPulsantiFinali, gbcPulsantiFinali);
 
-        GridBagConstraints gbcRicerca = new GridBagConstraints();
-
-        gbcRicerca.gridx = 0;
-        gbcRicerca.gridy = 0;
-
-        getContentPane().add(pannelloRicerca, gbcRicerca);
-
-        addComponentListener(new ComponentAdapter() {
-
-            @Override
-            public void componentResized(ComponentEvent e) {
-
-                aggiornaDimensioni();
-            }
-        });
-
-        btnCerca.addActionListener(e -> cercaElementi());
+        btnCerca.addActionListener(
+                e -> cercaElementi()
+        );
 
         btnVisualizza.addActionListener(e -> {
 
@@ -159,65 +183,195 @@ public class RicercaElementoPage extends JFrame {
         btnAnnulla.addActionListener(e -> {
 
             dispose();
-            controller.mostraProfilo();
+            controller.mostraMenu();
         });
+    }
 
-        aggiornaDimensioni();
+    private void creaPannelloRiproduzione() {
+
+        pannelloRiproduzione = new JPanel(new GridBagLayout());
+        pannelloRiproduzioneCompleto = new JPanel(new GridBagLayout());
+
+        lblInRiproduzione = new JLabel("In riproduzione", JLabel.CENTER);
+        lblTitoloRiproduzione = new JLabel("", JLabel.CENTER);
+
+        btnAggiungiPlaylist = new JButton("Aggiungi alla Playlist");
+        btnIndietro = new JButton("Indietro");
+
+        pannelloPulsantiRiproduzione = new JPanel(new GridLayout(1, 2, 15, 0));
+        pannelloPulsantiRiproduzione.add(btnAggiungiPlaylist);
+        pannelloPulsantiRiproduzione.add(btnIndietro);
+
+        GridBagConstraints gbcInRiproduzione = new GridBagConstraints();
+
+        gbcInRiproduzione.gridx = 0;
+        gbcInRiproduzione.gridy = 0;
+        gbcInRiproduzione.weightx = 1.0;
+        gbcInRiproduzione.fill = GridBagConstraints.HORIZONTAL;
+
+        gbcInRiproduzione.insets = new Insets(12, 10, 12, 10);
+
+        pannelloRiproduzioneCompleto.add(lblInRiproduzione, gbcInRiproduzione);
+
+        GridBagConstraints gbcTitoloRiproduzione = new GridBagConstraints();
+
+        gbcTitoloRiproduzione.gridx = 0;
+        gbcTitoloRiproduzione.gridy = 1;
+        gbcTitoloRiproduzione.weightx = 1.0;
+        gbcTitoloRiproduzione.fill = GridBagConstraints.HORIZONTAL;
+
+        gbcTitoloRiproduzione.insets = new Insets(12, 10, 12, 10);
+
+        pannelloRiproduzioneCompleto.add(lblTitoloRiproduzione, gbcTitoloRiproduzione);
+
+        GridBagConstraints gbcPulsantiRiproduzione = new GridBagConstraints();
+
+        gbcPulsantiRiproduzione.gridx = 0;
+        gbcPulsantiRiproduzione.gridy = 2;
+        gbcPulsantiRiproduzione.weightx = 1.0;
+        gbcPulsantiRiproduzione.fill = GridBagConstraints.HORIZONTAL;
+
+        gbcPulsantiRiproduzione.insets = new Insets(12, 10, 12, 10);
+
+        pannelloRiproduzioneCompleto.add(pannelloPulsantiRiproduzione, gbcPulsantiRiproduzione);
+        pannelloRiproduzione.add(pannelloRiproduzioneCompleto);
+
+        btnAggiungiPlaylist.addActionListener(e -> {
+
+            if (elementoRiprodotto == null) {
+                return;
+            }
+
+            String idPlaylist = JOptionPane.showInputDialog(this, "Inserisci ID della playlist:", "Aggiungi alla playlist",
+            		JOptionPane.QUESTION_MESSAGE);
+
+            if (idPlaylist == null) {
+                return;
+            }
+
+            idPlaylist = idPlaylist.trim();
+
+            if (idPlaylist.isEmpty()) {
+
+                JOptionPane.showMessageDialog(this, "Inserisci un ID playlist valido", "Attenzione", JOptionPane.WARNING_MESSAGE);
+
+                return;
+            }
+
+            boolean ok = controller.aggiungiElementoAPlaylist(elementoRiprodotto.getIdElemento(), idPlaylist);
+
+            if (ok) {
+
+                JOptionPane.showMessageDialog(this, "Elemento aggiunto alla playlist");
+
+            } else {
+
+                JOptionPane.showMessageDialog(this, "Impossibile aggiungere l'elemento", "Errore", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+    
+        btnIndietro.addActionListener(e ->
+
+                mostraSchermataRicerca()
+        );
+    }
+
+    public void mostraSchermataRicerca() {
+
+        setTitle("Ricerca Elemento");
+
+        cardLayout.show(pannelloPrincipale, "RICERCA");
+
+        pannelloPrincipale.revalidate();
+        pannelloPrincipale.repaint();
+    }
+
+    public void mostraSchermataRiproduzione(ElementoMultimediale elemento) {
+
+        if (elemento == null) {
+            return;
+        }
+
+        elementoRiprodotto = elemento;
+        setTitle("Riproduzione Elemento");
+        lblTitoloRiproduzione.setText(elemento.getTitolo());
+
+        cardLayout.show(pannelloPrincipale, "RIPRODUZIONE");
+
+        pannelloPrincipale.revalidate();
+        pannelloPrincipale.repaint();
     }
 
     private void aggiornaDimensioni() {
 
         int larghezzaFinestra = getContentPane().getWidth();
         int altezzaFinestra = getContentPane().getHeight();
+        int larghezzaContenuto = (int) (larghezzaFinestra * 0.48);
+        int altezzaContenuto = (int) (altezzaFinestra * 0.48);
 
-        int larghezzaPannello = (int) (larghezzaFinestra * 0.72);
-        int altezzaPannello = (int) (altezzaFinestra * 0.75);
+        larghezzaContenuto = Math.max(360, Math.min(larghezzaContenuto, 600));
+        altezzaContenuto = Math.max(290, Math.min(altezzaContenuto, 440));
+        int margineOrizzontale = Math.max(20, (larghezzaFinestra - larghezzaContenuto) / 2);
+        int margineVerticale = Math.max(20, (altezzaFinestra - altezzaContenuto) / 2);
 
-        larghezzaPannello = Math.max(340, Math.min(larghezzaPannello, 760));
-        altezzaPannello = Math.max(280, Math.min(altezzaPannello, 620));
+        pannelloRicerca.setBorder(javax.swing.BorderFactory.createEmptyBorder(margineVerticale, margineOrizzontale,
+                               margineVerticale, margineOrizzontale));
 
-        pannelloRicerca.setPreferredSize(new Dimension(larghezzaPannello, altezzaPannello));
+        int larghezzaRiproduzione = (int) (larghezzaFinestra * 0.42);
+        int altezzaRiproduzione = (int) (altezzaFinestra * 0.32);
 
-        int dimensioneFont = Math.min(larghezzaFinestra / 42, altezzaFinestra / 28);
+        larghezzaRiproduzione = Math.max(340, Math.min(larghezzaRiproduzione, 560));
 
-        dimensioneFont = Math.max(13, Math.min(dimensioneFont, 22));
+        altezzaRiproduzione = Math.max(190, Math.min(altezzaRiproduzione, 300));
 
-        Font font = new Font("Arial", Font.PLAIN, dimensioneFont);
+        pannelloRiproduzioneCompleto.setPreferredSize(new Dimension(larghezzaRiproduzione, altezzaRiproduzione));
 
-        lblTitolo.setFont(font);
-        txtTitolo.setFont(font);
+        int dimensioneFont = Math.min(larghezzaFinestra / 65, altezzaFinestra / 42);
+        dimensioneFont = Math.max(13, Math.min(dimensioneFont, 18));
+        Font fontNormale = new Font("Arial", Font.PLAIN, dimensioneFont);
+        Font fontTitolo = new Font("Arial", Font.BOLD, Math.min(dimensioneFont + 2, 20));
 
-        btnCerca.setFont(font);
-        btnVisualizza.setFont(font);
-        btnAnnulla.setFont(font);
-
-        listaRisultati.setFont(font);
+        lblTitolo.setFont(fontNormale);
+        txtTitolo.setFont(fontNormale);
+        btnCerca.setFont(fontNormale);
+        btnVisualizza.setFont(fontNormale);
+        btnAnnulla.setFont(fontNormale);
+        listaRisultati.setFont(fontNormale);
+        lblInRiproduzione.setFont(fontTitolo);
+        lblTitoloRiproduzione.setFont(fontNormale);
+        btnAggiungiPlaylist.setFont(fontNormale);
+        btnIndietro.setFont(fontNormale);
 
         pannelloTitolo.revalidate();
         pannelloTitolo.repaint();
-
         pannelloPulsantiRicerca.revalidate();
         pannelloPulsantiRicerca.repaint();
-
         pannelloPulsantiFinali.revalidate();
         pannelloPulsantiFinali.repaint();
-
+        pannelloPulsantiRiproduzione.revalidate();
+        pannelloPulsantiRiproduzione.repaint();
+        pannelloRiproduzioneCompleto.revalidate();
+        pannelloRiproduzioneCompleto.repaint();
         pannelloRicerca.revalidate();
         pannelloRicerca.repaint();
-    }
+        pannelloRiproduzione.revalidate();
+        pannelloRiproduzione.repaint();
+        pannelloPrincipale.revalidate();
+        pannelloPrincipale.repaint();
 
+    }
     private void cercaElementi() {
 
         String titolo = txtTitolo.getText().trim();
 
         if (titolo.isEmpty()) {
-
-            JOptionPane.showMessageDialog(this, "Inserisci il titolo dell'elemento", "Attenzione", JOptionPane.WARNING_MESSAGE);
+              JOptionPane.showMessageDialog(this, "inserisci il titolo dell'elemento", "Attenzione", JOptionPane.WARNING_MESSAGE);
 
             return;
         }
 
         ArrayList<ElementoMultimediale> risultati = controller.cercaElemento(titolo);
+
         mostraRisultati(risultati);
     }
 
