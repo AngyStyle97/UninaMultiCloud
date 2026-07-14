@@ -20,6 +20,7 @@ import java.awt.Toolkit;
 import java.awt.Color;
 
 public class CreaPlaylistPage extends JFrame {
+	// secondo commit
 
     private Controller controller;
     private JTextField txtIdPlaylist;
