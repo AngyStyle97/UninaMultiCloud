@@ -23,6 +23,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import control.Controller;
 import entity.ElementoMultimediale;
+import java.awt.Color;
 
 public class RicercaElementoPage extends JFrame {
 
@@ -68,7 +69,8 @@ public class RicercaElementoPage extends JFrame {
         setResizable(true);
 
         cardLayout = new CardLayout();
-        pannelloPrincipale = new JPanel(cardLayout);
+        pannelloPrincipale = new PannelloSfondo("/images/sfondo.jpg");
+        pannelloPrincipale.setLayout(cardLayout);
 
         creaPannelloRicerca();
         creaPannelloRiproduzione();
@@ -96,14 +98,18 @@ public class RicercaElementoPage extends JFrame {
 
         pannelloRicerca = new JPanel(new GridBagLayout());
         pannelloTitolo = new JPanel(new GridLayout(1, 2, 12, 0));
+        pannelloRicerca.setOpaque(false);
+        pannelloTitolo.setOpaque(false);
         
         lblTitolo = new JLabel("Titolo elemento");
+        lblTitolo.setForeground(Color.WHITE);
         txtTitolo = new JTextField();
 
         pannelloTitolo.add(lblTitolo);
         pannelloTitolo.add(txtTitolo);
 
         pannelloPulsantiRicerca = new JPanel(new GridLayout(1, 2, 15, 0));
+        pannelloPulsantiRicerca.setOpaque(false);
 
         btnCerca = new JButton("Cerca");
 
@@ -117,6 +123,7 @@ public class RicercaElementoPage extends JFrame {
         scrollRisultati = new JScrollPane(listaRisultati);
 
         pannelloPulsantiFinali = new JPanel(new GridLayout(1, 1));
+        pannelloPulsantiFinali.setOpaque(false);
 
         btnVisualizza = new JButton("Visualizza");
         pannelloPulsantiFinali.add(btnVisualizza);
@@ -191,14 +198,20 @@ public class RicercaElementoPage extends JFrame {
 
         pannelloRiproduzione = new JPanel(new GridBagLayout());
         pannelloRiproduzioneCompleto = new JPanel(new GridBagLayout());
+        pannelloRiproduzione.setOpaque(false);
+        pannelloRiproduzioneCompleto.setOpaque(false);
 
         lblInRiproduzione = new JLabel("In riproduzione", JLabel.CENTER);
+        lblInRiproduzione.setForeground(Color.WHITE);
+        
         lblTitoloRiproduzione = new JLabel("", JLabel.CENTER);
-
+        lblTitoloRiproduzione.setForeground(Color.WHITE);
+        
         btnAggiungiPlaylist = new JButton("Aggiungi alla Playlist");
         btnIndietro = new JButton("Indietro");
 
         pannelloPulsantiRiproduzione = new JPanel(new GridLayout(1, 2, 15, 0));
+        pannelloPulsantiRiproduzione.setOpaque(false);
         pannelloPulsantiRiproduzione.add(btnAggiungiPlaylist);
         pannelloPulsantiRiproduzione.add(btnIndietro);
 
