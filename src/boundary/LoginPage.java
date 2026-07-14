@@ -59,7 +59,8 @@ public class LoginPage extends JFrame {
 
         btnAccedi = new JButton("Accedi");
         btnCancella = new JButton("Cancella");
-
+        getRootPane().setDefaultButton(btnAccedi);
+        
         pannelloLogin.add(lblEmail);
         pannelloLogin.add(txtEmail);
         pannelloLogin.add(lblPassword);
