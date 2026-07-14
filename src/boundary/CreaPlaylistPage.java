@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import control.Controller;
 import java.awt.Toolkit;
+import java.awt.Color;
 
 public class CreaPlaylistPage extends JFrame {
 
@@ -44,15 +45,24 @@ public class CreaPlaylistPage extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(true);
-        getContentPane().setLayout(new GridBagLayout());
+        
+        PannelloSfondo pannelloSfondo = new PannelloSfondo("/images/sfondo.jpg");
+        pannelloSfondo.setLayout(new GridBagLayout());
+        setContentPane(pannelloSfondo);
 
         pannelloCampi = new JPanel(new GridLayout(3, 2, 12, 18));
+        pannelloCampi.setOpaque(false);
 
         lblIdPlaylist = new JLabel("ID playlist");
+        lblIdPlaylist.setForeground(Color.WHITE);
         txtIdPlaylist = new JTextField();
+        
         lblNomePlaylist = new JLabel("Nome playlist");
+        lblNomePlaylist.setForeground(Color.WHITE);
         txtNomePlaylist = new JTextField();
+        
         lblTipoPlaylist = new JLabel("Tipo playlist");
+        lblTipoPlaylist.setForeground(Color.WHITE);
         
         cmbTipoPlaylist = new JComboBox<>();
         cmbTipoPlaylist.addItem("Privata");
@@ -70,9 +80,13 @@ public class CreaPlaylistPage extends JFrame {
         btnAnnulla = new JButton("Annulla");
 
         pannelloPulsanti = new JPanel(new GridLayout(1, 2, 15, 0));
+        pannelloPulsanti.setOpaque(false);
+        
         pannelloPulsanti.add(btnCrea);
         pannelloPulsanti.add(btnAnnulla);
+        
         pannelloCompleto = new JPanel(new GridBagLayout());
+        pannelloCompleto.setOpaque(false);
 
         GridBagConstraints gbcCampi = new GridBagConstraints();
 
