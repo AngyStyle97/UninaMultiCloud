@@ -36,10 +36,13 @@ public class HomePage extends JFrame {
         setLocationRelativeTo(null);
         setResizable(true);
 
-        getContentPane().setLayout(new GridBagLayout());
-
+        PannelloSfondo pannelloSfondo = new PannelloSfondo("/images/sfondo.jpg");
+        
+        pannelloSfondo.setLayout(new GridBagLayout());       
+        setContentPane(pannelloSfondo);       
         pannelloMenu = new JPanel(new GridLayout(6, 1, 0, 12));
-
+        pannelloMenu.setOpaque(false);
+        
         btnProfilo = new JButton("Profilo");
         btnCaricaElemento = new JButton("Carica Elemento");
         btnCreaPlaylist = new JButton("Crea Playlist");
