@@ -1,10 +1,12 @@
 package boundary;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import javax.swing.JButton;
@@ -15,7 +17,6 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import control.Controller;
-import java.awt.Toolkit;
 
 public class LoginPage extends JFrame {
 
@@ -29,7 +30,8 @@ public class LoginPage extends JFrame {
     private JPanel pannelloLogin;
 
     public LoginPage(Controller controller) {
-    	setIconImage(Toolkit.getDefaultToolkit().getImage(LoginPage.class.getResource("/images/UNINAFY.png")));
+
+        setIconImage(Toolkit.getDefaultToolkit().getImage(LoginPage.class.getResource("/images/UNINAFY.png")));
 
         this.controller = controller;
 
@@ -39,14 +41,20 @@ public class LoginPage extends JFrame {
         setMinimumSize(new Dimension(420, 280));
         setLocationRelativeTo(null);
         setResizable(true);
-        getContentPane().setLayout(new GridBagLayout());
+
+        PannelloSfondo pannelloSfondo = new PannelloSfondo("/images/sfondo.jpg");
+        pannelloSfondo.setLayout(new GridBagLayout());
+
+        setContentPane(pannelloSfondo);
 
         pannelloLogin = new JPanel(new GridLayout(4, 2, 10, 15));
 
+        pannelloLogin.setOpaque(false);
         lblEmail = new JLabel("Email:");
+        lblEmail.setForeground(Color.WHITE);
         txtEmail = new JTextField();
-
         lblPassword = new JLabel("Password:");
+        lblPassword.setForeground(Color.WHITE);
         txtPassword = new JPasswordField();
 
         btnAccedi = new JButton("Accedi");
@@ -54,10 +62,8 @@ public class LoginPage extends JFrame {
 
         pannelloLogin.add(lblEmail);
         pannelloLogin.add(txtEmail);
-
         pannelloLogin.add(lblPassword);
         pannelloLogin.add(txtPassword);
-
         pannelloLogin.add(btnAccedi);
         pannelloLogin.add(btnCancella);
 
@@ -65,14 +71,17 @@ public class LoginPage extends JFrame {
 
         addComponentListener(new ComponentAdapter() {
 
-            @Override
-            public void componentResized(ComponentEvent e) {
+                    @Override
 
-                aggiornaDimensioni();
+                    public void componentResized(ComponentEvent e) {
 
-            }
+                        aggiornaDimensioni();
 
-        });
+                    }
+
+                }
+
+        );
 
         btnAccedi.addActionListener(e -> {
 
@@ -84,6 +93,7 @@ public class LoginPage extends JFrame {
             if (ok) {
 
                 dispose();
+
                 controller.mostraMenu();
 
             } else {
@@ -94,18 +104,22 @@ public class LoginPage extends JFrame {
 
         });
 
-        btnCancella.addActionListener(e -> pulisciCampi());
+        btnCancella.addActionListener(
+
+                e -> pulisciCampi()
+
+        );
 
         aggiornaDimensioni();
+
     }
 
     private void aggiornaDimensioni() {
 
         int larghezza = getContentPane().getWidth();
         int altezza = getContentPane().getHeight();
-
-        int larghezzaPannello = (int)(larghezza * 0.55);
-        int altezzaPannello = (int)(altezza * 0.50);
+        int larghezzaPannello = (int) (larghezza * 0.55);
+        int altezzaPannello = (int) (altezza * 0.50);
 
         larghezzaPannello = Math.max(300, Math.min(larghezzaPannello, 600));
         altezzaPannello = Math.max(180, Math.min(altezzaPannello, 260));
@@ -119,24 +133,18 @@ public class LoginPage extends JFrame {
 
         lblEmail.setFont(font);
         lblPassword.setFont(font);
-
         txtEmail.setFont(font);
         txtPassword.setFont(font);
-
         btnAccedi.setFont(font);
         btnCancella.setFont(font);
-
         pannelloLogin.revalidate();
         pannelloLogin.repaint();
+
     }
 
     public void mostraErrore(String messaggio) {
 
-        JOptionPane.showMessageDialog(
-                this,
-                messaggio,
-                "Errore",
-                JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, messaggio, "Errore", JOptionPane.ERROR_MESSAGE);
 
     }
 
@@ -146,4 +154,5 @@ public class LoginPage extends JFrame {
         txtPassword.setText("");
 
     }
+
 }
