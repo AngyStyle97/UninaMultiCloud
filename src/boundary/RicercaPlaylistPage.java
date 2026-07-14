@@ -19,6 +19,7 @@ import javax.swing.JTextField;
 import control.Controller;
 import entity.Playlist;
 import java.awt.Toolkit;
+import java.awt.Color;
 
 public class RicercaPlaylistPage extends JFrame {
 
@@ -44,14 +45,20 @@ public class RicercaPlaylistPage extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setResizable(true);
-        getContentPane().setLayout(new GridBagLayout());
+        
+        PannelloSfondo pannelloSfondo = new PannelloSfondo("/images/sfondo.jpg");
+        pannelloSfondo.setLayout(new GridBagLayout());
+        setContentPane(pannelloSfondo);
 
         pannelloCampi = new JPanel(new GridLayout(2, 2, 12, 18));
+        pannelloCampi.setOpaque(false);
 
         lblNome = new JLabel("Nome Playlist");
+        lblNome.setForeground(Color.WHITE);
         txtNomePlaylist = new JTextField();
 
         lblTipo = new JLabel("Tipo Playlist");
+        lblTipo.setForeground(Color.WHITE);
 
         cmbTipoPlaylist = new JComboBox<>();
         cmbTipoPlaylist.addItem("Privata");
@@ -68,10 +75,14 @@ public class RicercaPlaylistPage extends JFrame {
         btnAnnulla = new JButton("Annulla");
 
         pannelloPulsanti = new JPanel(new GridLayout(1, 2, 15, 0));
+        pannelloPulsanti.setOpaque(false);
+        
         pannelloPulsanti.add(btnCerca);
         pannelloPulsanti.add(btnAnnulla);
 
         pannelloCompleto = new JPanel(new GridBagLayout());
+        pannelloCompleto.setOpaque(false);
+        
         GridBagConstraints gbcCampi = new GridBagConstraints();
         gbcCampi.gridx = 0;
         gbcCampi.gridy = 0;

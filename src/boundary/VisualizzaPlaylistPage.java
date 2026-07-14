@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import control.Controller;
 import entity.Playlist;
 import java.awt.Toolkit;
+import java.awt.Color;
 
 public class VisualizzaPlaylistPage extends JFrame {
 
@@ -46,17 +47,25 @@ public class VisualizzaPlaylistPage extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(true);
-        getContentPane().setLayout(new GridBagLayout());
+        
+        PannelloSfondo pannelloSfondo = new PannelloSfondo("/images/sfondo.jpg");
+        pannelloSfondo.setLayout(new GridBagLayout());
+        setContentPane(pannelloSfondo);
 
         pannelloInformazioni = new JPanel(new GridLayout(2, 1, 0, 10));
+        pannelloInformazioni.setOpaque(false);
 
         lblTitoloPlaylist = new JLabel("Playlist: " + playlist.getNomePlaylist(), JLabel.CENTER);
+        lblTitoloPlaylist.setForeground(Color.WHITE);
+        
         lblNumeroElementi = new JLabel("Numero elementi: " + numeroElementi, JLabel.CENTER);
+        lblNumeroElementi.setForeground(Color.WHITE);
 
         pannelloInformazioni.add(lblTitoloPlaylist);
         pannelloInformazioni.add(lblNumeroElementi);
 
         pannelloPulsanti = new JPanel(new GridLayout(5, 1, 0, 12));
+        pannelloPulsanti.setOpaque(false);
 
         btnVisualizzaElemento = new JButton("Visualizza Elemento");
         btnRimuoviElemento = new JButton("Rimuovi Elemento");
@@ -71,6 +80,7 @@ public class VisualizzaPlaylistPage extends JFrame {
         pannelloPulsanti.add(btnIndietro);
 
         pannelloCompleto = new JPanel(new GridBagLayout());
+        pannelloCompleto.setOpaque(false);
 
         GridBagConstraints gbcInformazioni = new GridBagConstraints();
 
