@@ -11,7 +11,6 @@ import boundary.ProfiloPage;
 import boundary.ReportPlaylistPage;
 import boundary.RicercaElementoPage;
 import boundary.RicercaPlaylistPage;
-import boundary.RiproduzioneElementoPage;
 import boundary.VisualizzaPlaylistPage;
 import dao.CaricaDAO;
 import dao.CondivisaConDAO;
@@ -44,7 +43,7 @@ public class Controller {
     private UsaDAO usaDAO;
     private CondivisaConDAO condivisaConDAO;
     private CaricaDAO caricaDAO;
-
+    private RicercaElementoPage ricercaElementoPage;
     private ProfiloPage profiloPage;
     private ReportPlaylistPage reportPlaylistPage;
 
@@ -255,8 +254,20 @@ public class Controller {
 
     public void mostraRicercaElemento() {
 
-        RicercaElementoPage pagina = new RicercaElementoPage(this);
-        pagina.setVisible(true);
+    	if(!utenteAutenticato()) {
+    		
+    		mostraMessaggio("Devi effettuare il login.");
+    		return;
+    	}
+    	
+    	if(ricercaElementoPage == null || !ricercaElementoPage.isDisplayable()) {
+    		
+    		ricercaElementoPage = new RicercaElementoPage(this);
+    	}
+        
+    	ricercaElementoPage.mostraSchermataRicerca();
+    	ricercaElementoPage.setVisible(true);
+    	ricercaElementoPage.toFront();
     }
 
     public ArrayList<ElementoMultimediale> cercaElemento(String titolo) {
@@ -268,18 +279,36 @@ public class Controller {
         return elementoDAO.cercaElementi(titolo.trim());
     }
 
-	public void mostraRiproduzioneElemento(ElementoMultimediale elemento) {
+    public void mostraRiproduzioneElemento(ElementoMultimediale elemento) {
 
         if (elemento == null) {
 
             mostraMessaggio("Nessun elemento selezionato.");
+            return;
+        }
+
+        boolean registrata = registraRiproduzione(elemento.getIdElemento(), 0);
+
+        if (!registrata) {
+
+            mostraMessaggio("Impossibile registrare la riproduzione.");
 
             return;
         }
 
-        RiproduzioneElementoPage pagina = new RiproduzioneElementoPage(this, elemento);
+        ElementoMultimediale elementoAggiornato = elementoDAO.cercaPerId(elemento.getIdElemento());
 
-        pagina.setVisible(true);
+        if (elementoAggiornato == null) {elementoAggiornato = elemento;}
+
+        if (ricercaElementoPage == null || !ricercaElementoPage.isDisplayable()) {
+
+            ricercaElementoPage = new RicercaElementoPage(this);}
+
+        ricercaElementoPage.mostraSchermataRiproduzione(elementoAggiornato);
+
+        ricercaElementoPage.setVisible(true);
+        ricercaElementoPage.toFront();
+        ricercaElementoPage.requestFocus();
     }
 
     public void mostraVisualizzaElementoDaPlaylist(
