@@ -44,6 +44,8 @@ public class Controller {
     private CondivisaConDAO condivisaConDAO;
     private CaricaDAO caricaDAO;
     private RicercaElementoPage ricercaElementoPage;
+    private Playlist playlistCorrente;
+    private boolean riproduzioneDaPlaylist;
     private ProfiloPage profiloPage;
     private ReportPlaylistPage reportPlaylistPage;
 
@@ -260,6 +262,8 @@ public class Controller {
     		return;
     	}
     	
+    	   riproduzioneDaPlaylist = false;
+    	   
     	if(ricercaElementoPage == null || !ricercaElementoPage.isDisplayable()) {
     		
     		ricercaElementoPage = new RicercaElementoPage(this);
@@ -268,6 +272,7 @@ public class Controller {
     	ricercaElementoPage.mostraSchermataRicerca();
     	ricercaElementoPage.setVisible(true);
     	ricercaElementoPage.toFront();
+    	ricercaElementoPage.requestFocus();
     }
 
     public ArrayList<ElementoMultimediale> cercaElemento(String titolo) {
@@ -311,18 +316,66 @@ public class Controller {
         ricercaElementoPage.requestFocus();
     }
 
-    public void mostraVisualizzaElementoDaPlaylist(
-            String idPlaylist) {
+    public void tornaIndietroDallaRiproduzione() {
 
-        if (idPlaylist == null) {
+        if (riproduzioneDaPlaylist) {
+
+            riproduzioneDaPlaylist = false;
+
+            if (ricercaElementoPage != null) {
+
+                ricercaElementoPage.dispose();
+                ricercaElementoPage = null;
+
+            }
+
+            if (playlistCorrente != null) {
+
+                Playlist playlistAggiornata = playlistDAO.cercaPerId(playlistCorrente.getIdPlaylist());
+
+                if (playlistAggiornata != null) {
+
+                    playlistCorrente = playlistAggiornata;
+
+                }
+
+                mostraVisualizzaPlaylist(playlistCorrente);
+
+            } else {
+
+                mostraRicercaPlaylist();
+
+            }
+
             return;
+
+        }
+
+        if (ricercaElementoPage != null && ricercaElementoPage.isDisplayable()) {
+
+            ricercaElementoPage.mostraSchermataRicerca();
+            ricercaElementoPage.toFront();
+            ricercaElementoPage.requestFocus();
+
+        } else {
+
+            mostraRicercaElemento();
+
+        }
+
+    }
+    
+    public boolean mostraVisualizzaElementoDaPlaylist(String idPlaylist) {
+
+        if (idPlaylist == null || idPlaylist.trim().isEmpty()) {
+            return false;
         }
 
         String idElemento = JOptionPane.showInputDialog(null, "Inserisci l'ID dell'elemento da visualizzare:", "Visualizza elemento",
                         JOptionPane.QUESTION_MESSAGE);
 
         if (idElemento == null) {
-            return;
+            return false;
         }
 
         idElemento = idElemento.trim();
@@ -331,7 +384,7 @@ public class Controller {
 
             mostraMessaggio("Inserisci un ID valido.");
 
-            return;
+            return false;
         }
 
         ElementoMultimediale elemento = elementoDAO.cercaPerId(idElemento);
@@ -340,10 +393,20 @@ public class Controller {
 
             mostraMessaggio("Elemento non trovato.");
 
-            return;
+            return false;
         }
-
+        
+        Playlist playlist = playlistDAO.cercaPerId(idPlaylist.trim());
+        
+        if(playlist != null) {
+        	playlistCorrente = playlist;
+        }
+        
+        riproduzioneDaPlaylist = true;
+        
         mostraRiproduzioneElemento(elemento);
+        
+        return true;
     }
 
     public boolean registraRiproduzione( String idElemento, double tempoUtilizzo) {
@@ -416,29 +479,20 @@ public class Controller {
         return risultati;
     }
 
-    public void mostraVisualizzaPlaylist(
-            Playlist playlist) {
+    public void mostraVisualizzaPlaylist(Playlist playlist) {
 
         if (playlist == null) {
 
-            mostraMessaggio(
-                    "Nessuna playlist selezionata."
-            );
+            mostraMessaggio( "Nessuna playlist selezionata.");
 
             return;
         }
+         
+        playlistCorrente = playlist;
+        
+        int numeroElementi = playlistDAO.contaElementi(playlist.getIdPlaylist());
 
-        int numeroElementi =
-                playlistDAO.contaElementi(
-                        playlist.getIdPlaylist()
-                );
-
-        VisualizzaPlaylistPage pagina =
-                new VisualizzaPlaylistPage(
-                        this,
-                        playlist,
-                        numeroElementi
-                );
+        VisualizzaPlaylistPage pagina = new VisualizzaPlaylistPage(this, playlist, numeroElementi);
 
         pagina.setVisible(true);
     }
@@ -507,14 +561,10 @@ public class Controller {
             return false;
         }
 
-        return playlistDAO.eliminaPlaylist(
-                idPlaylist.trim()
-        );
+        return playlistDAO.eliminaPlaylist(idPlaylist.trim());
     }
 
-    public boolean condividiPlaylist(
-            String idPlaylist,
-            String emailUtente) {
+    public boolean condividiPlaylist(String idPlaylist,String emailUtente) {
 
         if (!utenteAutenticato()) {
 
@@ -539,8 +589,7 @@ public class Controller {
 
         if (playlist == null) {
 
-            mostraMessaggio("Playlist non trovata."
-            );
+            mostraMessaggio("Playlist non trovata.");
 
             return false;
         }
@@ -561,10 +610,7 @@ public class Controller {
             return false;
         }
 
-        return condivisaConDAO.salvaCondivisione(
-                emailUtente,
-                idPlaylist
-        );
+        return condivisaConDAO.salvaCondivisione(emailUtente, idPlaylist);
     }
 
     public void mostraReportPlaylist() {
@@ -643,8 +689,7 @@ public class Controller {
             return;
         }
 
-        CreaPlaylistPage pagina =
-                new CreaPlaylistPage(this);
+        CreaPlaylistPage pagina = new CreaPlaylistPage(this);
 
         pagina.setVisible(true);
     }
@@ -653,9 +698,7 @@ public class Controller {
 
         if (!utenteAutenticato()) {
 
-            mostraMessaggio(
-                    "Devi effettuare il login."
-            );
+            mostraMessaggio("Devi effettuare il login.");
 
             return false;
         }

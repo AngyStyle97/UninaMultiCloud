@@ -285,7 +285,7 @@ public class RicercaElementoPage extends JFrame {
     
         btnIndietro.addActionListener(e ->
 
-                mostraSchermataRicerca()
+                controller.tornaIndietroDallaRiproduzione()
         );
     }
 

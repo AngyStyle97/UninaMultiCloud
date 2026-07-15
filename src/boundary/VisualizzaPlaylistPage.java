@@ -120,12 +120,17 @@ public class VisualizzaPlaylistPage extends JFrame {
             }
         });
 
-        btnVisualizzaElemento.addActionListener(
-                e -> controller.mostraVisualizzaElementoDaPlaylist(
-                        playlist.getIdPlaylist()
-                )
-        );
+        btnVisualizzaElemento.addActionListener(e -> {
 
+            boolean aperto = controller.mostraVisualizzaElementoDaPlaylist(playlist.getIdPlaylist());
+
+            if (aperto) {
+
+                dispose();
+
+            }
+
+        });
         btnRimuoviElemento.addActionListener(e -> {
 
             String idElemento = JOptionPane.showInputDialog(this, "Inserisci ID elemento da rimuovere:");
