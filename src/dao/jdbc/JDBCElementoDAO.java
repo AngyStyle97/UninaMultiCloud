@@ -252,7 +252,7 @@ public class JDBCElementoDAO implements ElementoMultimedialeDAO {
 
                     rs.getString("titolo"),
                     
-                    rs.getInt("numerovisualizzazioni"),
+                    rs.getInt("numvisualizzazioni"),
                     
                     rs.getString("immaginecopertina"),
 
